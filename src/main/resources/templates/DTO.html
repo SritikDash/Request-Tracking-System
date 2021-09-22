@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<!-- <link rel="stylesheet" href="style.css"> -->
+<title>DTO</title>
+
+
+</head>
+<body>
+
+	<!-- <p th:text="${req}"></p> -->
+	<ul>
+		<li th:each="n : ${req}"><span th:text="${n.requestTitle}">
+		</span></li>
+	</ul>
+
+
+</body>
+</html>

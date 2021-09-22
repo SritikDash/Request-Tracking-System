@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Login</title>
+	<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/a81368914c.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="" th:href="@{/css/style.css}" />
+	
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+	
+	</head>
+<body>
+	<div class="flex">
+		<img class="logo" th:src="@{/img/Cozentus-Logo.png}" src="">
+		<h1>Request Tracking System</h1>
+	</div>
+	
+	<img class="wave" th:src="@{/img/wave_blue.png}" src="">
+	<div class="alert alert-warning text-center" th:if="${user.isInvalid}" th:text="${user.msg}"></div>
+	<div id="warning-msg"></div>
+	<div class="container">
+	
+		<div class="img">
+			<!-- <img src="img/bg.svg"> -->
+		</div>
+		<div class="login-content">
+			<form action="#" th:action="@{/Login}" th:object="${user}" method="post" autocomplete="off">
+				<img src="" th:src="@{/img/avatarLogo.svg}" />
+				<h2 class="title">Login</h2>
+           		<div class="input-div one">
+           		   <div class="i">
+           		   		<i class="fas fa-user"></i>
+           		   </div>
+					  
+           		   <div class="div">
+           		   		<h5>Username / Email</h5>
+           		   		<input id="userName" type="text" th:field="*{userEmail}" class="input" required>
+           		   </div>
+           		</div>
+           		<div class="input-div pass">
+           		   <div class="i"> 
+           		    	<i class="far fa-eye" id="togglePassword" style="cursor: pointer;"></i>
+           		   </div>
+					  
+           		   
+            	   <div class="div">
+           		    	<h5>Password</h5>
+           		    	<input id="password" type="password" th:field="*{userPassword}" class="input" autocomplete="current-password" required>
+  						
+            	   </div>
+            	</div>
+            	<a id="forget" th:href="@{/reset}">Forgot Password?</a>
+            	<input id="btn-submit" type="submit" class="btn-sub" value="Login">
+            	
+            </form>
+        </div>
+    </div>
+    
+    <script type="text/javascript" th:inline="javascript" th:src="@{/js/main.js}" ></script>
+    
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    </body>
+</html>

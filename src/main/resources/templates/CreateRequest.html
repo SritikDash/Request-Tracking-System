@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create/Edit Request</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+	<link rel="stylesheet" href="" th:href="@{/css/Request.css}" />
+</head>
+
+<body>
+
+    <div class="container-fluid p-3">
+        <img id="logo" th:src="@{/img/Cozentus-Logo.png}" alt="Cozentus-Logo">
+    </div>
+    <div class="container mt-3">
+        <h1 class="text-center bg-light mb-3">Create Request</h1>
+		<form action="#" th:action="@{/saveRequest}" th:object="${request}" method="post" autocomplete="off">
+	
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="rqstTitle">Request Title<span class="text-danger">*</span></label>
+                </div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" name="" th:field="*{requestTitle}"  id="rqstTitle" placeholder="Request Title">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="rqstDesc">Request Description<span class="text-danger">*</span></label>
+                </div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" name="" id="rqstDesc" th:field="*{requestDescription}" placeholder="Request Description">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="deptSelect">Assigned To Dept<span class="text-danger">*</span></label>
+                </div>
+               
+                <div class="col-md-9">
+                    <select class="form-select" name="" th:field="*{requestDept}" id="deptSelect">
+                    	
+                        <option th:each="id : ${deptIds}" th:text = "${id.value}" th:value="${id.key}"></option> 
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="userSelect">Assigned To User<span class="text-danger">*</span></label>
+                </div>
+                <div class="col-md-9">
+                    <select class="form-select" th:field="*{assignedTo}" name="" id="userSelect">
+                        
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="rqstNum">Request Number</label>
+                </div>
+                <div class="col-md-4">
+                    <input class="form-control" type="text" name="rqstNum" id="" th:value="${'Auto Generated'}"  readonly>
+                </div>
+                
+                <div class="col-md-2 text-center">
+                    <label for="status">Status<span class="text-danger">*</span></label>
+                </div>
+                <div class="col-md-3">
+                    <input type = "text" class="form-control" name="" id="status" th:field="*{initialStatus}" readonly>
+                        
+                    
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="comments">Comments</label>
+                </div>
+                <div class="col-md-9">
+                    <!-- <input class="form-control" type="text" name="" id="comments" placeholder="Comments"> -->
+                    <textarea class="form-control" name="" id="comments" th:field="*{initialComments}"  placeholder="Comments"></textarea>
+                </div>
+            </div>
+            <div class="row text-center mb-3">
+                <div class="col-md-6">
+                    <button class="btn btn-success" id="btn-submit">Save</button>
+                </div>
+                <div class="col-md-6">
+                    <a class="btn btn-danger" th:href="@{/Homepage}">Cancel</a>
+                </div>
+            </div>
+        </form>
+        <div id="warning-msg"></div>
+        <div class="text-center text-danger" th:text="${message}"></div>
+    </div>
+        <script type="text/javascript" th:inline="javascript" th:src="@{/js/request.js}" ></script>
+    
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

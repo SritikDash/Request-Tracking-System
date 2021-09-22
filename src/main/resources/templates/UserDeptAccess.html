@@ -1,0 +1,241 @@
+<!-- <!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<section>
+<div class="card mr-3 ml-3" id="shadow" style="width: auto;">
+
+
+<script
+src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<div class="card-body" id="bd01">
+<div class="table-responsive-md">
+
+
+<table class=“table-footer-cell” id="myTable">
+<thead>
+
+<tr class="text-uppercase">
+<th scope="col">User ID</th>
+<th style="display: none;" scope="col">Department Code</th>
+<th scope="col">Department Name</th>
+<th style="display: none;" scope="col">CreatedDate</th>
+<th scope="col">createdBy</th>
+<th scope="col">User_Role</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="dcl : ${listDepts}">
+
+<td th:text="${id}" th:value="${id}"></td>
+
+
+
+<td style="display: none;" scope="row" th:text="${dcl.deptId}" th:value="${dcl.deptId}"></td>
+
+<td scope="row" th:text="${dcl.departmentName}" th:value="${dcl.departmentName}"></td>
+
+<td style="display: none;" th:text="${session.curdate}" th:value="${session.curdate}"></td>
+<td th:text="${session.userId}" th:value="${session.userId}"></td>
+
+<td scope="row"><select class="form-control"
+aria-label="Default select example" name="role" id="role">
+<option selected="selected" value="nouser">nouser</option>
+<option value="user">user</option>
+<option value="admin">admin</option>
+</select></td>
+</tr>
+</tbody>
+
+</table>
+
+<div class="col-sm-11 text-center">
+<button class="btn btn-outline-primary float-left " id="myButton"
+type="submit" style="width: 48%">Save Department Access</button>
+<a class="btn btn-outline-secondary float-right" type="reset"
+style="width: 48%" th:href="@{/ViewUsers}">Back</a>
+
+
+</div>
+</form>
+
+</div>
+</div>
+</div>
+
+
+<script>
+$(document).ready(function() {
+$("#myButton").on('click', function() {
+var arrData = [];
+$("#myTable tbody  tr").each(function() {
+var currentRow = $(this).closest("tr");
+var col1_value = currentRow.find("td:eq(0)").text();
+var col2_value = currentRow.find("td:eq(1)").text();
+var col3_value = currentRow.find("td:eq(3)").text();
+var col4_value = currentRow.find("td:eq(4)").text();
+var col5_value = currentRow.find("option:selected").text();
+var obj = {};
+obj.userId = col1_value;
+obj.deptId = col2_value;
+obj.createddate = col3_value;
+obj.createdBy = col4_value;
+obj.role = col5_value;
+arrData.push(obj);
+});
+console.log(arrData);
+$.ajax({
+type : "POST",
+url : "http://localhost:9090/saveuserrole",
+data : JSON.stringify(arrData),
+contentType : "application/json",
+
+});
+
+});
+});
+</script>
+
+
+</section>
+</body>
+
+</html> -->
+
+ 
+ 
+ 
+ 
+ 
+ 
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+   
+   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <style>
+        .container {
+            width: 60%;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section>
+        <div class="card mr-3 ml-3" id="shadow" style="width: auto;">
+
+
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+            <div class="card-body" id="bd01">
+                <div class="table-responsive-md container">
+
+                    <h1 class="text-center bg-light mb-3">Manage User Access</h1>
+
+                    <table class="table table-footer-cell" id="myTable">
+                        <thead>
+                            <tr class="text-uppercase">
+                                <th style="display: none;" scope="col">User ID</th>
+                                <th style="display: none;" scope="col">Department Code</th>
+                                <th scope="col">Department Name</th>
+                                <th style="display: none;" scope="col">CreatedDate</th>
+                                <th style="display: none;" scope="col">createdBy</th>
+                                <th scope="col">User_Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="dcl : ${listDepts}">
+
+                                <td style="display: none;" th:text="${id}" th:value="${id}"></td>
+
+
+
+                                <td style="display: none;" scope="row" th:text="${dcl.deptId}" th:value="${dcl.deptId}">
+                                </td>
+
+                                <td scope="row" th:text="${dcl.departmentName}" th:value="${dcl.departmentName}"></td>
+
+                                <td style="display: none;" th:text="${session.curdate}" th:value="${session.curdate}">
+                                </td>
+                                <td style="display: none;" th:text="${session.userId}" th:value="${session.userId}"></td>
+
+                                <td scope="row"><select class="form-select" aria-label="Default select example"
+                                        name="role" id="role">
+                                        <option selected="selected" value="nouser">nouser</option>
+                                        <option value="user">user</option>
+                                        <option value="admin">admin</option>
+                                    </select></td>
+                            </tr>
+                           
+                        </tbody>
+
+                    </table>
+
+                    <div class="col-sm-12 text-center">
+                        <a class="btn btn-outline-primary float-left " id="myButton" type="submit" th:href="@{/ViewUsers}"
+                            style="width: 48%">Save Department Access</a>
+                        <a class="btn btn-outline-secondary float-right" type="reset" style="width: 48%"
+                            th:href="@{/ViewUsers}">Back</a>
+                    </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            $(document).ready(function () {
+                $("#myButton").on('click', function () {
+                    var arrData = [];
+                    $("#myTable tbody  tr").each(function () {
+                        var currentRow = $(this).closest("tr");
+                        var col1_value = currentRow.find("td:eq(0)").text();
+                        var col2_value = currentRow.find("td:eq(1)").text();
+                        var col3_value = currentRow.find("td:eq(3)").text();
+                        var col4_value = currentRow.find("td:eq(4)").text();
+                        var col5_value = currentRow.find("option:selected").text();
+                        var obj = {};
+                        obj.userId = col1_value;
+                        obj.deptId = col2_value;
+                        obj.createddate = col3_value;
+                        obj.createdBy = col4_value;
+                        obj.role = col5_value;
+                        arrData.push(obj);
+                    });
+                    console.log(arrData);
+                    $.ajax({
+                        type: "POST",
+                        url: "http://localhost:9090/saveuserrole",
+                        data: JSON.stringify(arrData),
+                        contentType: "application/json",
+
+                    });
+
+                });
+            });
+        </script>
+
+
+    </section>
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        crossorigin="anonymous"></script>
+</body>
+
+</html> 
