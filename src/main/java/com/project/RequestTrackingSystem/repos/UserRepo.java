@@ -44,4 +44,23 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 			+ "where d.dept_id = :deptId", nativeQuery = true)
 	public List<User> getAllUsersByDeptId(int deptId);
 	
+	
+	@Query(value = "Select uda.is_admin from user u\n"
+			+ "Inner Join user_dept_access uda ON u.user_id = uda.userid\n"
+			+ "where \n"
+			+ "uda.userid = :userId\n"
+			, nativeQuery = true)
+	public boolean getAdmin(@Param("userId") int userId);
+	
+	
+	
+	@Query(value = "Select * from rts.user where username = :userName and user_id != :userId", nativeQuery = true)
+	public User checkDuplicateUserName(String userName, int userId);
+	
+	@Query(value = "Select * from rts.user where user_email = :userEmail and user_id != :userId", nativeQuery = true)
+	public User checkDuplicateUserEmail(String userEmail, int userId);
+	
+	
+	
+	
 }

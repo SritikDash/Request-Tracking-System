@@ -95,6 +95,47 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	
+	public User getById(int id) {
+		return this.userRepo.getById(id);
+	}
+	
+	
+	public String edit(User user) {
+		
+		String msg;
+		
+		User checkEmail = this.userRepo.checkDuplicateUserEmail(user.getUserEmail(), user.getUserId());
+		User checkUserName = this.userRepo.checkDuplicateUserName(user.getUserName(), user.getUserId());
+		if(checkEmail == null && checkUserName == null) {
+			this.userRepo.save(user);
+			msg = "Saved";
+		} else {
+			if(checkEmail != null && checkUserName != null) {
+				msg = "Email and UserName already Exists!!";
+			}
+			else if(checkEmail != null) {
+				msg = "Email already Exists!!";
+			} 
+			else if(checkUserName != null) {
+				msg = "UserName already exists!!";
+			}
+			else {
+				msg = "";
+			}
+			
+		}
+		
+		return msg;
+	}
+	
+	
+	
+	
+	public boolean isUserAdmin(int userId) {
+		return this.userRepo.getAdmin(userId);
+	}
+	
+	
 	
 //	public void save(User user) {
 //		userRepo.save(user);

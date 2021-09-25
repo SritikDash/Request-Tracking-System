@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.project.RequestTrackingSystem.models.AuditLog;
 import com.project.RequestTrackingSystem.models.ChangePassword;
@@ -93,8 +94,13 @@ public class MainController {
 
 			System.out.println(session.getAttribute("userId"));
 			System.out.println(request.getSession(false));
-
-			return "redirect:/dashboard";
+			
+//			Check whether user is admin or not
+			
+			
+//			session.setAttribute("isAdmin", isAdmin);
+			return "redirect:/dashboard";    
+			
 		} else {
 			argUser.setIsInvalid(true);
 			// argUser.setMsg(argUser.getMsg());
@@ -112,7 +118,23 @@ public class MainController {
 		if (session == null) {
 			return "redirect:/";
 		}
-		return "dashboard";
+		boolean isAdmin = this.userSvc.isUserAdmin((int) session.getAttribute("userId"));
+		if(isAdmin)
+			return "dashboard";
+		else
+			return "redirect:/userdashboard";
+//		return "dashboard";
+	}
+	
+	@GetMapping("/userdashboard")
+	public String getUserDashboard(HttpServletRequest request) {
+
+		HttpSession session = request.getSession(false);
+//		System.out.println("ID" + session.getAttribute("userId"));
+		if (session == null) {
+			return "redirect:/";
+		}
+		return "user_dashboard";
 	}
 
 	@GetMapping("/ChangePassword")
@@ -139,6 +161,8 @@ public class MainController {
 		return mav;
 
 	}
+	
+	
 
 	@PostMapping("/UpdatePassword")
 	public String updatePassword(@ModelAttribute("password") ChangePassword password, Model model) {
@@ -209,9 +233,15 @@ public class MainController {
 	}
 
 	@PostMapping("/editDept")
-	public String editDept(@ModelAttribute("dept") Department dept, Model model) {
+	public String editDept(@ModelAttribute("dept") Department dept, Model model, HttpServletRequest request) {
 		System.out.println("Edit Dept" + dept.getDeptId());
+		
+		HttpSession session = request.getSession(false);
+		dept.setUserId((int) session.getAttribute("userId"));
+		
+		
 		String msg = deptSvc.edit(dept);
+		
 		System.out.println(msg);
 
 		TreeMap<Integer, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
@@ -219,7 +249,7 @@ public class MainController {
 		model.addAttribute("deptIds", deptIdsAndCodes);
 		model.addAttribute("dept", dept);
 		model.addAttribute("message", msg);
-		return "Department";
+		return "redirect:/ViewDepts";
 	}
 
 	@PostMapping("/saveDept")
@@ -285,7 +315,7 @@ public class MainController {
 		System.out.println("Save Request");
 		HttpSession session = req.getSession(false);
 		
-		request.setAssignedUser((int) session.getAttribute("userId"));
+//		request.setAssignedUser((int) session.getAttribute("userId"));
 		
 		
 		int status = this.reqSvc.saveRequest(request, 1);
@@ -324,9 +354,15 @@ public class MainController {
 
 		Requests request = this.reqSvc.getRequestByID(id);
 		
+		int assignedUserId = request.getAssignedTo().getUserId();
+		String assignedUserFirstName = request.getAssignedTo().getFirstName();
+		
+		
 		List<AuditLog> requestHistoryLogs = this.reqSvc.requestHistory(id);
 		
 		
+		mav.addObject("assignedUserId", assignedUserId);
+		mav.addObject("assignedUserFirstName", assignedUserFirstName);
 		mav.addObject("deptIds", deptIdsAndCodes);
 		mav.addObject("request", request);
 		mav.addObject("requestHistoryLogs", requestHistoryLogs);
@@ -461,8 +497,32 @@ public class MainController {
 
 	}
 	
+	@PostMapping("/saveEditUser")
+	public String saveEditUser(Model model, @ModelAttribute("user") User user, RedirectAttributes redirAttrs) {
+		System.out.println("User Saved");
+		String msg = this.userSvc.edit(user);
+		if(msg.compareTo("Saved") == 0) {
+			return "redirect:/ViewUsers";
+		} else {
+			model.addAttribute("user", user);
+			model.addAttribute("msg", msg);
+			redirAttrs.addFlashAttribute("error", msg);
+			return "redirect:/EditUser/"+user.getUserId();
+		}
+
+	}
 	
 	
+	@GetMapping("/EditUser/{id}")
+	public ModelAndView editUser(Model model, @PathVariable(name = "id") int id) {
+		ModelAndView mav = new ModelAndView("EditUser");
+		
+		User user = this.userSvc.getById(id);
+		mav.addObject("user", user);
+		
+		return mav;
+		
+	}
 	
 	@GetMapping("/ViewUsers")
 	public String listUsers(HttpServletRequest request, Model model, @RequestParam("page") Optional<Integer> page,
@@ -489,6 +549,35 @@ public class MainController {
 
 		return "ViewUsers";
 	}
+	
+	
+	@GetMapping("/ViewDepts")
+	public String listDepts(HttpServletRequest request, Model model, @RequestParam("page") Optional<Integer> page,
+			@RequestParam("size") Optional<Integer> size) {
+
+		HttpSession session = request.getSession(false);
+
+		if (session == null) {
+			return "redirect:/";
+		}
+
+		int currentPage = page.orElse(1);
+		int pageSize = size.orElse(8);
+
+		Page<Department> deptPage = this.deptSvc.findPaginated(PageRequest.of(currentPage - 1, pageSize));
+
+		model.addAttribute("deptPage", deptPage);
+
+		int totalPages = deptPage.getTotalPages();
+		if (totalPages > 0) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+
+		return "ViewDepts";
+	}
+	
+	
 	
 	@GetMapping("/getAllUsersByDept")
 	public ResponseEntity<List<UserDept>> getAllUsersByDept(@RequestParam(name = "deptId") int deptId) {

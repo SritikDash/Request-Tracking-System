@@ -21,4 +21,10 @@ public interface UserService {
 	public List<UserDept> getAllUsersByDept(int deptId);
 	
 	public Page<User> findPaginated(Pageable pageable);
+	
+	public boolean isUserAdmin(int userId);
+	
+	public User getById(int id);
+	
+	public String edit(User user);
 }

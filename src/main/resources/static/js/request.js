@@ -115,6 +115,7 @@ var req = new XMLHttpRequest();
 //     req.send();
 // })
 
+let deptChanged = 0;
 
 
 document.addEventListener("DOMContentLoaded", function(){
@@ -152,9 +153,13 @@ function getResponse() {
 			newOption.text = jsonData.value;
 			selectBox.appendChild(newOption);
 		}*/
-		while (selectBox.lastElementChild) {
+
+		if(deptChanged == 1) {
+			while (selectBox.lastElementChild) {
 				selectBox.removeChild(selectBox.lastElementChild);
+			}
 		}
+		
 		
 		
 		for(data in jsonData) {
@@ -185,6 +190,7 @@ function getResponse() {
 // var req = new XMLHttpRequest();
 
 document.getElementById("deptSelect").addEventListener("change", (e) => {
+	deptChanged = 1;
 	let deptId = document.getElementById("deptSelect").value;
 	console.log(deptId);
 	var reqUrl = 'http://localhost:9090/getAllUsersByDept?deptId='+deptId;

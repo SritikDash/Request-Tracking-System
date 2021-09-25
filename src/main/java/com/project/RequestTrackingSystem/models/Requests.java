@@ -62,7 +62,7 @@ public class Requests {
 	private String initialStatus = "New Request";
 	
 	
-	
+
 	@ManyToOne(targetEntity = Department.class)
 	@JoinColumn(name="request_dept")
 	private Department requestDept;
@@ -90,6 +90,11 @@ public class Requests {
 
 	
 
+	@Transient
+	private int requestAge;
+	
+	
+	
 
 	@Transient
 	private static String seqNum = "00001";
@@ -218,7 +223,13 @@ public class Requests {
 	}
 
 	
+	public int getRequestAge() {
+		return requestAge;
+	}
 
+	public void setRequestAge(int requestAge) {
+		this.requestAge = requestAge;
+	}
 	
 
 

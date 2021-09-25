@@ -80,7 +80,9 @@ public class RequestServiceImpl implements RequestService {
 		System.out.println(req);
 		System.out.print(req.getRequestTitle() + req.getRequestDept() + req.getRequestNumber());
 		
-		req.setCreatedBy(this.userRepo.getById(req.getAssignedUser()));
+		
+		
+		
 
 		// deptRepo.findById(req.getRequestDept()).get().getDeptCode();
 
@@ -88,11 +90,13 @@ public class RequestServiceImpl implements RequestService {
 //				deptRepo.findById(req.getRequestDept().getDeptId()).get().getDeptCode(), Requests.getSeqNum()));
 
 		if( flag == 0) {
+			req.setCreatedBy(this.userRepo.getById(req.getAssignedUser()));
 			int seqCounter = seqRepo.getSeqNumber();
 			req.setRequestNumber(this.buildReqNumber(deptRepo.findById(req.getRequestDept().getDeptId()).get().getDeptCode(), seqCounter));
 		}
 		
 		if(flag == 1) {
+			req.setCreatedBy(this.reqRepo.getById(req.getRequestId()).getCreatedBy());
 			req.setRequestNumber(this.buildReqNumber(deptRepo.findById(req.getRequestDept().getDeptId()).get().getDeptCode(), Integer.parseInt(req.getRequestNumber().substring(4, req.getRequestNumber().length()))));
 		}
 		
@@ -104,13 +108,21 @@ public class RequestServiceImpl implements RequestService {
 			if(flag == 0) {
 				seqRepo.save(new SequenceCounter());
 			}
-			Map<String, Object> model = new HashMap<>();
-    		model.put("Number", req.getRequestNumber());
-    		model.put("Title", req.getRequestTitle());
-    		model.put("Description", req.getRequestDescription());
-    		model.put("location", "Cozentus, Bhubaneswar");
+			Map<String, Object> modelAssignedTo = new HashMap<>();
+			modelAssignedTo.put("Number", req.getRequestNumber());
+			modelAssignedTo.put("Title", req.getRequestTitle());
+			modelAssignedTo.put("Description", req.getRequestDescription());
+			modelAssignedTo.put("location", "Cozentus, Bhubaneswar");
     		
-			this.sendEmail(model, req.getAssignedTo().getUserEmail());
+			this.sendEmail(modelAssignedTo, req.getAssignedTo().getUserEmail());
+			
+			Map<String, Object> modelCreatedBy = new HashMap<>();
+			modelCreatedBy.put("Number", req.getRequestNumber());
+			modelCreatedBy.put("Title", req.getRequestTitle());
+			modelCreatedBy.put("Description", "Your Request Has been assigned!!");
+			modelCreatedBy.put("location", "Cozentus, Bhubaneswar");
+    		
+    		this.sendEmail(modelCreatedBy, req.getCreatedBy().getUserEmail());
 
 			status = 1;
 		} catch (Exception e) {
@@ -167,12 +179,21 @@ public class RequestServiceImpl implements RequestService {
 
 	public List<Requests> getAllRequests() {
 		List<Requests> allRequests = this.reqRepo.findAllByCreatedDateDesc();
+		for(Requests argReq : allRequests) {
+//			System.out.println(this.reqRepo.getAge(argReq.getRequestId()));
+			argReq.setRequestAge(this.reqRepo.getAge(argReq.getRequestId()));
+		}
 		return allRequests;
 	}
 	
 	
 	public List<Requests> getReqs() {
-		return this.reqRepo.findAll();
+		List<Requests> reqList =  this.reqRepo.findAll();
+		for(Requests argReq : reqList) {
+			System.out.println(this.reqRepo.getAge(argReq.getRequestId()));
+			argReq.setRequestAge(this.reqRepo.getAge(argReq.getRequestId()));
+		}
+		return reqList;
 	}
 
 	public Requests getRequestByID(int id) {
@@ -258,11 +279,21 @@ public class RequestServiceImpl implements RequestService {
 	}
     
 	public List<Requests> getMyRequests(int userId) {
-		return this.reqRepo.findAllByCreatedByOrderByAssignedDateDesc(userRepo.getById(userId));
+		List<Requests> myRequests =  this.reqRepo.findAllByCreatedByOrderByAssignedDateDesc(userRepo.getById(userId));
+		for(Requests argReq : myRequests) {
+//			System.out.println(this.reqRepo.getAge(argReq.getRequestId()));
+			argReq.setRequestAge(this.reqRepo.getAge(argReq.getRequestId()));
+		}
+		return myRequests;
 	}
 	
 	public List<Requests> getMyTasks(int userId) {
-		return this.reqRepo.findAllByAssignedToOrderByAssignedDateDesc(userRepo.getById(userId));
+		List<Requests> myTasks = this.reqRepo.findAllByAssignedToOrderByAssignedDateDesc(userRepo.getById(userId));
+		for(Requests argReq : myTasks) {
+//			System.out.println(this.reqRepo.getAge(argReq.getRequestId()));
+			argReq.setRequestAge(this.reqRepo.getAge(argReq.getRequestId()));
+		}
+		return myTasks;
 	}
 	
 	
@@ -368,6 +399,17 @@ public class RequestServiceImpl implements RequestService {
     	argStat.setStatusDesc(request.getInitialStatus());
     	//argStat.setRequestCommentId(requestComment);
     	this.statRepo.save(argStat);
+    	
+    	if(request.getInitialStatus().compareTo("Completed") == 0) {
+    		Map<String, Object> model = new HashMap<>();
+    		model.put("Number", request.getRequestNumber());
+    		model.put("Title", request.getRequestTitle());
+    		model.put("Description", request.getInitialStatus());
+    		model.put("location", "Cozentus, Bhubaneswar");
+    		
+//			this.sendEmail(model, this.userRepo.getById(request.getCreatedBy().getUserId()).getUserEmail());
+			this.sendEmail(model, request.getCreatedBy().getUserEmail());
+    	}
     	
     	return 1;
    

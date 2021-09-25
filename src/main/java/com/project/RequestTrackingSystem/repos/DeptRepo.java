@@ -17,4 +17,6 @@ public interface DeptRepo extends JpaRepository<Department, Integer> {
 	@Query(value="SELECT * FROM rts.dept where dept_code  = parent_department_code", nativeQuery = true)
 	public List<Department> findAllParentDept();
 	
+	public List<Department> findAllByOrderByCreatedDateDesc();
+	
 }

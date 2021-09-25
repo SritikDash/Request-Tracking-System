@@ -72,7 +72,7 @@
 					<td th:text="${req.initialStatus}">
 					<td th:text="${req.assignedTo.firstName}">Mark</td>
 					<td th:text="${req.assignedDate}"></td>
-					<td>Yet to be Done</td>
+					<td th:text="${req.requestAge}"></td>
 					
 				</tr>
 			</tbody>
@@ -99,7 +99,7 @@
 			<a class="btn btn-danger btn-sm" th:href="@{/dashboard}">Back</a>
 		</div>
 
-	<h1 th:text="${Page}"></h1>
+	<!-- <h1 th:text="${Page}"></h1> -->
 	</div>
 </body>
 

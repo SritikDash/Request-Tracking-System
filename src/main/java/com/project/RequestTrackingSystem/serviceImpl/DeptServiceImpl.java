@@ -1,13 +1,18 @@
 package com.project.RequestTrackingSystem.serviceImpl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.project.RequestTrackingSystem.models.Department;
-
+import com.project.RequestTrackingSystem.models.User;
 import com.project.RequestTrackingSystem.repos.DeptRepo;
 import com.project.RequestTrackingSystem.repos.UserRepo;
 import com.project.RequestTrackingSystem.services.DeptService;
@@ -116,15 +121,62 @@ public class DeptServiceImpl implements DeptService {
 		return this.deptRepo.getById(id);
 	}
 	
+	
+	
+	////////////////////////////Fix the Edit Department/////////////////////////////////////////////////
 	public String edit(Department dept) {
+		
+		if (dept.getParentDepartmentCode().compareTo("none") == 0) {
+			dept.setParentDepartmentCode(dept.getDeptCode());
+		}
+		
+		dept.setCreatedBy(userRepo.getById(dept.getUserId()).getFirstName());
 		this.deptRepo.save(dept);
 		return "Saved Successfully";
 	}
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	
 	
 	
 	public List<Department> getAllDepts() {
 		// TODO Auto-generated method stub
 		return this.deptRepo.findAll();
 	}
+	
+	public List<Department> getSortedDeptByCreatedDate() {
+		return this.deptRepo.findAllByOrderByCreatedDateDesc();
+	}
+	
+	public Page<Department> findPaginated(Pageable pageable) {
+    	List<Department> dept = this.deptRepo.findAll();
+    	
+    	
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        
+        
+        int startItem = currentPage * pageSize;
+        List<Department> list;
+
+        if (dept.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, dept.size());
+            list = dept.subList(startItem, toIndex);
+        }
+
+        Page<Department> deptPage
+          = new PageImpl<Department>(list, PageRequest.of(currentPage, pageSize), dept.size());
+
+        return deptPage;
+    }
+	
+	
+	
+	
+	
+	
 	
 }

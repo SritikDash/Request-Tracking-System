@@ -38,7 +38,7 @@
 		<div class="row">
 			<div class="input-div pass text-center">
 				<div class="head">
-					<h1 class="text-center">Manage Department</h1>
+					<h1 class="text-center">Edit Department</h1>
 				</div>
 				<form action="#" th:action="@{/editDept}" th:object="${dept}"
 					method="post" autocomplete="off">
@@ -51,7 +51,7 @@
 					
 					<div class="mb-3 mt-3">
 						<input type="text" th:field="*{deptCode}" class="form-control"
-							id="DeptCode" placeholder="Department Code">
+							id="DeptCode" placeholder="Department Code" readonly="readonly">
 					</div>
 					
 					
@@ -62,12 +62,12 @@
 					</div>    --> 					
 					
 					<div class="mb-3">
-						<input th:field="*{parentDepartmentCode}" class="form-control" list="datalistOptions"
-							id="ParentDeptCode" placeholder="Parent Department Code">
-						<datalist id="datalistOptions">
+						<!-- <input th:field="*{parentDepartmentCode}" class="form-control" list="datalistOptions"
+							id="ParentDeptCode" placeholder="Parent Department Code"> -->
+						<select id="datalistOptions" class="form-select" th:field="*{parentDepartmentCode}">
 							<option th:value="none">New Parent Department</option>
 							<option th:each="id : ${deptIds}" th:text = "${id.value}" th:value="${id.value}"></option>
-						</datalist>
+						</select>
 					</div>
 					<div class="mb-3">
 						<input type="text" th:field="*{departmentName}"
@@ -94,7 +94,7 @@
 							value="Save">
 					</div>
 					<div class="btn">
-						<input type="reset" class="btn btn-danger" value="Cancel">
+						<a class="btn btn-danger" th:href="@{/ViewDepts}">Cancel</a>
 					</div>
 				</form>
 				<div class="text-center text-danger" th:text="${message}"></div>

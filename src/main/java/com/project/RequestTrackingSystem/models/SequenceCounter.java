@@ -2,7 +2,8 @@ package com.project.RequestTrackingSystem.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -19,6 +20,7 @@ public class SequenceCounter {
 
 	@Id
 	@Column(name="seq_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
 }

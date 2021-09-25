@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.project.RequestTrackingSystem.models.Requests;
@@ -21,7 +22,7 @@ public interface RequestRepo extends JpaRepository<Requests, Integer> {
 	
 	public List<Requests> findAllByCreatedByOrderByAssignedDateDesc(User user);
 
-
-
+	@Query(value="SELECT datediff(assigned_date, created_date) FROM rts.requests where request_id = :requestId", nativeQuery = true)
+	public int getAge(@Param("requestId") int requestId);
 
 }

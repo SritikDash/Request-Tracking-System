@@ -32,9 +32,13 @@
         <img id="logo" th:src="@{/img/Cozentus-Logo.png}" alt="Cozentus-Logo">
     </div>
     <div class="container mt-3">
-        <h1 class="text-center bg-light mb-3">Create User</h1>
-        <form action="#" th:action="@{/saveUser}" th:object="${user}" method="post" autocomplete="off">
-
+        <h1 class="text-center bg-light mb-3">Edit User</h1>
+        
+        <form action="#" th:action="@{/saveEditUser}" th:object="${user}" method="post" autocomplete="off">
+        	<h5 class="text-center bg-light mb-3"><a th:href="@{'/deptAccess/' + *{userId}}">Manage User Access</a></h5>
+ 		    <input type="hidden" th:field="*{userId}">
+ 		    <input type="hidden" class="form-control" name="" id="password" th:field="*{userPassword}"
+                        placeholder="Password">
             <div class="row mb-3">
                 <div class="col-md-3">
                     <label for="rqstTitle">User Name<span class="text-danger">*</span></label>
@@ -71,15 +75,15 @@
                         placeholder="Email">
                 </div>
             </div>
-            <div class="row mb-3">
+            <!-- <div class="row mb-3">
                 <div class="col-md-3">
                     <label for="rqstDesc">Password<span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-9">
-                    <input type="password" class="form-control" name="" id="password" th:field="*{userPassword}"
+                    <input type="hidden" class="form-control" name="" id="password" th:field="*{userPassword}"
                         placeholder="Password">
                 </div>
-            </div>
+            </div>  -->
 
             <div class="row mb-3">
                 <div class="col-md-3">
@@ -104,6 +108,7 @@
         </form>
         <div id="warning-msg"></div>
         <div class="text-center text-danger" th:text="${msg}"></div>
+        <div class="alert alert-danger text-center" role="alert" th:text="${error}" th:if="${error}"></div>
 
     </div>
 

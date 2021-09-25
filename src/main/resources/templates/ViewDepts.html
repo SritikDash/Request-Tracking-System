@@ -22,16 +22,12 @@
 		<img id="logo" th:src="@{/img/Cozentus-Logo.png}" alt="Cozentus-Logo">
 	</div>
 	<div class="container-fluid main">
-		<h1 class="text-center bg-light mb-3">User Management</h1>
+		<h1 class="text-center bg-light mb-3">Department Management</h1>
 		<div class="row">
-			<!-- <div class="col-md-9 d-flex flex-row-reverse "></div>
-<div class="col-md-3 mb-3">
-<input type="search" class="form-control" name="" id="search"
-placeholder="Search..">
-</div> -->
+			
 			<div class="col-md-3">
-				<a class="btn btn-primary btn-sm" th:href="@{/ManageUser}">Create
-					User</a>
+				<a class="btn btn-primary btn-sm" th:href="@{/Dept}">Create
+					Department</a>
 			</div>
 			<div class="col-md-6"></div>
 			<div class="col-md-3">
@@ -43,47 +39,40 @@ placeholder="Search..">
 		<table class="table">
 			<thead>
 				<tr>
-					<th scope="col">User ID</th>
-					<th scope="col">User Name</th>
-					<th scope="col">User FirstName</th>
-					<th scope="col">User LastName</th>
-					<th scope="col">User Email</th>
+					<th scope="col">Department ID</th>
+					<th scope="col">Department Code</th>
+					<th scope="col">Department Name</th>
+					<th scope="col">Parent Department Code</th>
 					<th scope="col">Created By</th>
-					<th scope="col">Created Date</th>
-					<th scope="col">Is User Active</th>
+					<th scope="col">Created Date</th> 
+					<th scope="col">Is Department Active</th>
 
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="req, iStat : ${userPage.content}">
-					<!-- <td th:text="${req.requestNumber}" /> -->
-					<td><a th:text="${req.userId}"
-						th:href="@{'/EditUser/' + ${req.userId}}"></a></td>
+				<tr th:each="req, iStat : ${deptPage.content}">
+					
+					<td><a th:text="${req.deptId}"
+						th:href="@{'/EditDept/' + ${req.deptId}}"></a></td>
 					<!-- <td><a th:text="${req.requestNumber}"></a></td> -->
-					<td th:text="${req.userName}" />
-					<td th:text="${req.firstName}">Mark</td>
-					<td th:text="${req.lastName}"></td>
-					<td th:text="${req.userEmail}"></td>
+					<td th:text="${req.deptCode}" />
+					<td th:text="${req.departmentName}">Mark</td>
+					<td th:text="${req.parentDepartmentCode}"></td>
 					<td th:text="${req.createdBy}" />
 					<td th:text="${req.createdDate}"></td>
-					<td th:text="${req.userActive}"></td>
+					<td th:text="${req.deptActive}"></td>
 				</tr>
 			</tbody>
 		</table>
 
 
-		<!-- <div th:if="${reqPage.totalPages > 0}" class="pagination"
-th:each="pageNumber : ${pageNumbers}">
-<a th:href="@{/Homepage(size=${reqPage.size}, page=${pageNumber})}"
-th:text=${pageNumber}
-th:class="${pageNumber==reqPage.number + 1} ? active"></a>
-</div> -->
+		
 
 		<nav aria-label="...">
 			<ul class="pagination pagination-sm">
-				<li class="page-item" th:if="${userPage.totalPages > 0}"
+				<li class="page-item" th:if="${deptPage.totalPages > 0}"
 					th:each="pageNumber : ${pageNumbers}"><a
-					th:href="@{/ViewUsers(size=${userPage.size}, page=${pageNumber})}"
+					th:href="@{/ViewDepts(size=${deptPage.size}, page=${pageNumber})}"
 					th:text=${pageNumber} class="page-link"></a></li>
 			</ul>
 		</nav>

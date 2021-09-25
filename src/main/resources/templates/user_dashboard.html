@@ -4,7 +4,7 @@
 	xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="utf-8" />
-<title>Admin Dashboard</title>
+<title>User Dashboard</title>
 <!-- CSS only -->
 
 <!-- JavaScript Bundle with Popper -->
@@ -72,10 +72,11 @@ You are logged in as <span th:text="${session.userName}"></span>
 				<ul class="menu me-auto mb-3 mb-lg-2">
 					<span th:text="#{welcome.text}"> </span>&nbsp&nbsp
 					<li class="username" th:text="${session.userName}">USERNAME</li>
-					<li><a class="dropdown-item" id="logout" th:text="#{logout.text}"th:href="@{/logout}">Logout</a></li>
-					
-					
-					
+					<li><a class="dropdown-item" id="logout"
+						th:text="#{logout.text}" th:href="@{/logout}">Logout</a></li>
+
+
+
 					<li class="nav-item dropdown" style="margin-left:30px;"><select id="locales">
 							<option value="">-Select-</option>
 							<option value="en">English</option>
@@ -102,18 +103,19 @@ You are logged in as <span th:text="${session.userName}"></span>
 				<div class="serv-content"
 					style="margin-bottom: 50px; margin-top: 50px;">
 
-					<div class="card"style="margin-left: 28px;">
+					<div class="card" style="margin-left: 28px;">
 						<div class="box">
-							<i class="fa fa-key" aria-hidden="true"></i>
-							<div id="box1" th:text="#{box1.text}">Change Any Password</div>
-							<a th:href="@{'/ChangeAnyPassword'}">Click Here</a>
+							<i class="fa fa-street-view" aria-hidden="true"></i>
+							<div id="box4" th:text="#{box4.text}">VIEW ALL REQUEST</div>
+							<a th:href="@{'/MyTasks'}">Click Here</a>
+
 						</div>
 					</div>
 					<div class="card">
 						<div class="box">
-							<i class="fas fa-code"></i>
-							<div id="box2" th:text="#{box2.text}">VIEW DEPARTMENTS</div>
-							<a th:href="@{'/ViewDepts'}">Click Here</a>
+							<i class="fa fa-paper-plane" aria-hidden="true"></i>
+							<div id="box5" th:text="#{box5.text}">CREATE REQUEST</div>
+							<a th:href="@{'/CreateRequest'}">Click Here</a>
 
 						</div>
 					</div>
@@ -126,71 +128,13 @@ You are logged in as <span th:text="${session.userName}"></span>
 					</div>
 
 				</div>
-
-
-
-
-				<div class="serv-content"
-					style="display: flex; justify-content: right;">
-					<div class="card" style="margin-right: 40px;">
-						<div class="box">
-							<i class="fa fa-street-view" aria-hidden="true"></i>
-							<div id="box4" th:text="#{box4.text}">VIEW ALL REQUEST</div>
-							<a th:href="@{'/MyTasks'}">Click Here</a>
-
-						</div>
-					</div>
-					<div class="card" style="margin: 0 ">
-						<div class="box">
-							<i class="fa fa-paper-plane" aria-hidden="true"></i>
-							<div id="box5" th:text="#{box5.text}">CREATE REQUEST</div>
-							<a th:href="@{'/CreateRequest'}">Click Here</a>
-
-						</div>
-					</div>
-					<div class="card">
-						<div class="box">
-							<i class="fas fa-users" aria-hidden="true"></i>
-							<div id="box7" th:text="#{box7.text}">View Users</div>
-							<a th:href="@{'/ViewUsers'}">Click Here</a>
-
-						</div>
-					</div>
-					<!-- <div class="card">
-						<div class="box">
-							<i class="fas fa-user-plus" aria-hidden="true"></i>
-							<div id="box6" th:text="#{box6.text}">Manage Users</div>
-							<a th:href="@{'/ManageUser'}">Click Here</a>
-
-						</div>
-					</div> -->
-
-				</div>
-
-				<!-- <div class="serv-content"
-					style="display: flex; justify-content: right;">
-
-					<div class="card">
-						<div class="box">
-							<i class="fas fa-users" aria-hidden="true"></i>
-							<div id="box7" th:text="#{box7.text}">View Users</div>
-							<a th:href="@{'/ViewUsers'}">Click Here</a>
-
-						</div>
-					</div>
-
-
-
-				</div> -->
-
-
 			</div>
 
 		</section>
 
-	</div>
 
-	<script>
+
+		<script>
 		$(document).ready(function() {
 			$("#locales").change(function() {
 				var selectedOption = $('#locales').val();
@@ -200,9 +144,5 @@ You are logged in as <span th:text="${session.userName}"></span>
 			});
 		});
 	</script>
-
-
-
-
 </body>
 </html>

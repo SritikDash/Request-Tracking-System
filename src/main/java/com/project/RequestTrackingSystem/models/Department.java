@@ -1,5 +1,6 @@
 package com.project.RequestTrackingSystem.models;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -33,8 +34,18 @@ public class Department {
 	@Column(name="parent_department_code")
 	private String parentDepartmentCode;
 	
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
 	@Column(name="created_by")
 	private String createdBy;
+	
+	@Column(name = "created_date")
+	private Date createdDate = new Date();
 	
 	@Column(name="is_dept_active")
 	private boolean deptActive;
