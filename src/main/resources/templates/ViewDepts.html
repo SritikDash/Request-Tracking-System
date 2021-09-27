@@ -31,15 +31,16 @@
 			</div>
 			<div class="col-md-6"></div>
 			<div class="col-md-3">
-				<input type="search" class="form-control" name="" id="search"
-					placeholder="Search..">
+				<form th:action="@{/searchDept}" action="" method="get">
+					<input type="search" class="form-control" name="search" id="search" placeholder="Search..">
+				</form>
 			</div>
 		</div>
 
 		<table class="table">
 			<thead>
 				<tr>
-					<th scope="col">Department ID</th>
+					<!-- <th scope="col">Department ID</th> -->
 					<th scope="col">Department Code</th>
 					<th scope="col">Department Name</th>
 					<th scope="col">Parent Department Code</th>
@@ -52,10 +53,10 @@
 			<tbody>
 				<tr th:each="req, iStat : ${deptPage.content}">
 					
-					<td><a th:text="${req.deptId}"
-						th:href="@{'/EditDept/' + ${req.deptId}}"></a></td>
+					<!-- <td><a th:text="${req.deptId}"
+						th:href="@{'/EditDept/' + ${req.deptId}}"></a></td> -->
 					<!-- <td><a th:text="${req.requestNumber}"></a></td> -->
-					<td th:text="${req.deptCode}" />
+					<td><a th:text="${req.deptCode}" th:href="@{'/EditDept/' + ${req.deptId}}"></a></td>
 					<td th:text="${req.departmentName}">Mark</td>
 					<td th:text="${req.parentDepartmentCode}"></td>
 					<td th:text="${req.createdBy}" />

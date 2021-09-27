@@ -47,6 +47,19 @@ public class UserServiceImpl implements UserService{
 	        return matcher.find();
 	}
 	
+	
+//	XOR Cipher Encryption
+	public String encDec(String encDecStr) {
+		byte key = 0x1A;
+		String output = "";
+		
+		for(int i = 0; i < encDecStr.length(); i++) {
+			output+=Character.toString((char)(encDecStr.charAt(i) ^ key));
+		}
+
+		return output;
+	}
+	
 	public User validate(User user) {
 		User argUser;	
 		String msg;
@@ -499,6 +512,7 @@ public class UserServiceImpl implements UserService{
 			if(argUser == null) {
 				String passwordStrength = this.isPasswordValid(user.getUserPassword());
 				if(passwordStrength.compareTo("Strong") == 0) {
+					user.setUserPassword(this.encDec(user.getUserPassword()));
 					userRepo.save(user);
 					msg = "Saved";
 				} else {
@@ -514,6 +528,29 @@ public class UserServiceImpl implements UserService{
 		return msg;
 
 
+	}
+	
+	public Page<User> searchByUserField(Pageable pageable, String searchPattern) {
+		List<User> user = this.userRepo.searchUser(searchPattern);
+    	
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        
+        
+        int startItem = currentPage * pageSize;
+        List<User> list;
+
+        if (user.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, user.size());
+            list = user.subList(startItem, toIndex);
+        }
+
+        Page<User> userPage
+          = new PageImpl<User>(list, PageRequest.of(currentPage, pageSize), user.size());
+
+        return userPage;
 	}
 	
 }

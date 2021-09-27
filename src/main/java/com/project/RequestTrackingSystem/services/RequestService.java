@@ -34,4 +34,6 @@ public interface RequestService {
 	
 	
 	public List<AuditLog> requestHistory(int reqId);
+	
+	public Page<Requests> searchByRequestNumberOrTitle(Pageable pageable, String requestNumber);
 }

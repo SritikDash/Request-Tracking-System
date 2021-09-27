@@ -24,5 +24,9 @@ public interface RequestRepo extends JpaRepository<Requests, Integer> {
 
 	@Query(value="SELECT datediff(assigned_date, created_date) FROM rts.requests where request_id = :requestId", nativeQuery = true)
 	public int getAge(@Param("requestId") int requestId);
+	
+	@Query(value="SELECT * FROM rts.requests WHERE request_number like %:searchPattern%  OR request_title like %:searchPattern% ", nativeQuery = true)
+	public List<Requests> searchByRequestNumber(@Param("searchPattern") String searchPattern);
+	
 
 }

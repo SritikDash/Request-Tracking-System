@@ -63,7 +63,7 @@
 							id="ParentDeptCode" placeholder="Parent Department Code">
 						<datalist id="datalistOptions">
 							<option th:value="none">New Parent Department</option>
-							<option th:each="id : ${deptIds}" th:text = "${id.value}" th:value="${id.value}"></option>
+							<option th:each="id : ${deptIds}" th:text = "${id.value}" th:value="${id.key}"></option>
 						</datalist>
 					</div>
 					<div class="mb-3">

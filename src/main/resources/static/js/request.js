@@ -16,6 +16,9 @@ document.getElementById("btn-submit").addEventListener("click", (e) => {
 	let userSelect = document.getElementById("userSelect").value;
 	let status = document.getElementById("status").value;
 
+	let severity = document.getElementById("severity").value;
+	let priority = document.getElementById("priority").value;
+
 
 	
 
@@ -83,6 +86,28 @@ document.getElementById("btn-submit").addEventListener("click", (e) => {
 		
 		document.getElementById("warning-msg").style.display = "block";
 		document.getElementById("warning-msg").innerHTML = "Please Select A Status";
+		setTimeout(()=> {
+			document.getElementById("warning-msg").style.display = "none";
+		}, 4000);
+		
+        valid = 0;
+    }
+
+	if(severity == 0 && valid == 1) {
+		
+		document.getElementById("warning-msg").style.display = "block";
+		document.getElementById("warning-msg").innerHTML = "Please Select Severity!!";
+		setTimeout(()=> {
+			document.getElementById("warning-msg").style.display = "none";
+		}, 4000);
+		
+        valid = 0;
+    }
+
+	if(priority == 0 && valid == 1) {
+		
+		document.getElementById("warning-msg").style.display = "block";
+		document.getElementById("warning-msg").innerHTML = "Please Select Priority!!";
 		setTimeout(()=> {
 			document.getElementById("warning-msg").style.display = "none";
 		}, 4000);

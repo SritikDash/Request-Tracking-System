@@ -35,15 +35,16 @@ placeholder="Search..">
 			</div>
 			<div class="col-md-6"></div>
 			<div class="col-md-3">
-				<input type="search" class="form-control" name="" id="search"
-					placeholder="Search..">
+				<form th:action="@{/searchUser}" action="" method="get">
+					<input type="search" class="form-control" name="search" id="search" placeholder="Search..">
+				</form>
 			</div>
 		</div>
 
 		<table class="table">
 			<thead>
 				<tr>
-					<th scope="col">User ID</th>
+					<!-- <th scope="col">User ID</th> -->
 					<th scope="col">User Name</th>
 					<th scope="col">User FirstName</th>
 					<th scope="col">User LastName</th>
@@ -57,10 +58,11 @@ placeholder="Search..">
 			<tbody>
 				<tr th:each="req, iStat : ${userPage.content}">
 					<!-- <td th:text="${req.requestNumber}" /> -->
-					<td><a th:text="${req.userId}"
-						th:href="@{'/EditUser/' + ${req.userId}}"></a></td>
+					<!-- <td><a th:text="${req.userId}"
+						th:href="@{'/EditUser/' + ${req.userId}}"></a></td> -->
 					<!-- <td><a th:text="${req.requestNumber}"></a></td> -->
-					<td th:text="${req.userName}" />
+					<td><a th:text="${req.userName}" 
+						th:href="@{'/EditUser/' + ${req.userId}}"></a></td>
 					<td th:text="${req.firstName}">Mark</td>
 					<td th:text="${req.lastName}"></td>
 					<td th:text="${req.userEmail}"></td>

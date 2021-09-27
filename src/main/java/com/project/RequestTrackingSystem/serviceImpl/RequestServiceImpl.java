@@ -423,6 +423,31 @@ public class RequestServiceImpl implements RequestService {
 		
 		return requestHistoryLogs;
 	}
+	
+
+	public Page<Requests> searchByRequestNumberOrTitle(Pageable pageable, String searchPattern) {
+		List<Requests> req = this.reqRepo.searchByRequestNumber(searchPattern);
+		
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<Requests> list;
+
+        if (req.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, req.size());
+            list = req.subList(startItem, toIndex);
+        }
+
+        Page<Requests> reqPage
+          = new PageImpl<Requests>(list, PageRequest.of(currentPage, pageSize), req.size());
+
+        return reqPage;
+	}
+
+	
+
 
 	
 

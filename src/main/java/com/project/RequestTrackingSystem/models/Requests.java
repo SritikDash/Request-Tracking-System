@@ -61,6 +61,12 @@ public class Requests {
 	@Column(name="initial_status")
 	private String initialStatus = "New Request";
 	
+	@Column(name="request_severity")
+	private int requestSeverity;
+	
+	@Column(name="request_priority")
+	private int requestPriority;
+	
 	
 
 	@ManyToOne(targetEntity = Department.class)
@@ -232,6 +238,21 @@ public class Requests {
 	}
 	
 
+	public int getRequestSeverity() {
+		return requestSeverity;
+	}
+
+	public void setRequestSeverity(int requestSeverity) {
+		this.requestSeverity = requestSeverity;
+	}
+
+	public int getRequestPriority() {
+		return requestPriority;
+	}
+
+	public void setRequestPriority(int requestPriority) {
+		this.requestPriority = requestPriority;
+	}
 
 
 }

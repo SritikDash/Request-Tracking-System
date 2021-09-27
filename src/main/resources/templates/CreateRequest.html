@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html  xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org" >
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,7 +9,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-	<link rel="stylesheet" href="" th:href="@{/css/Request.css}" />
+    <link rel="stylesheet" href="" th:href="@{/css/Request.css}" />
 </head>
 
 <body>
@@ -19,14 +19,15 @@
     </div>
     <div class="container mt-3">
         <h1 class="text-center bg-light mb-3">Create Request</h1>
-		<form action="#" th:action="@{/saveRequest}" th:object="${request}" method="post" autocomplete="off">
-	
+        <form action="#" th:action="@{/saveRequest}" th:object="${request}" method="post" autocomplete="off">
+
             <div class="row mb-3">
                 <div class="col-md-3">
                     <label for="rqstTitle">Request Title<span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" name="" th:field="*{requestTitle}"  id="rqstTitle" placeholder="Request Title">
+                    <input type="text" class="form-control" name="" th:field="*{requestTitle}" id="rqstTitle"
+                        placeholder="Request Title">
                 </div>
             </div>
             <div class="row mb-3">
@@ -34,18 +35,19 @@
                     <label for="rqstDesc">Request Description<span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" name="" id="rqstDesc" th:field="*{requestDescription}" placeholder="Request Description">
+                    <input type="text" class="form-control" name="" id="rqstDesc" th:field="*{requestDescription}"
+                        placeholder="Request Description">
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-3">
                     <label for="deptSelect">Assigned To Dept<span class="text-danger">*</span></label>
                 </div>
-               
+
                 <div class="col-md-9">
                     <select class="form-select" name="" th:field="*{requestDept}" id="deptSelect">
-                    	
-                        <option th:each="id : ${deptIds}" th:text = "${id.value}" th:value="${id.key}"></option> 
+
+                        <option th:each="id : ${deptIds}" th:text="${id.value}" th:value="${id.key}"></option>
                     </select>
                 </div>
             </div>
@@ -55,7 +57,33 @@
                 </div>
                 <div class="col-md-9">
                     <select class="form-select" th:field="*{assignedTo}" name="" id="userSelect">
-                        
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="severity">Severity<span class="text-danger">*</span></label>
+                </div>
+                <div class="col-md-4">
+                    <select name="" class="form-select" th:field = "*{requestSeverity}" id="severity">
+                        <option value="0" selected disabled>-Select-</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 text-center">
+                    <label for="priority">Priority<span class="text-danger">*</span></label>
+                </div>
+                <div class="col-md-3">
+                    <select name="" class="form-select" th:field="*{requestPriority}" id="priority">
+                        <option value="0" selected disabled>-Select-</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
                     </select>
                 </div>
             </div>
@@ -65,16 +93,17 @@
                     <label for="rqstNum">Request Number</label>
                 </div>
                 <div class="col-md-4">
-                    <input class="form-control" type="text" name="rqstNum" id="" th:value="${'Auto Generated'}"  readonly>
+                    <input class="form-control" type="text" name="rqstNum" id="" th:value="${'Auto Generated'}"
+                        readonly>
                 </div>
-                
+
                 <div class="col-md-2 text-center">
                     <label for="status">Status<span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-3">
-                    <input type = "text" class="form-control" name="" id="status" th:field="*{initialStatus}" readonly>
-                        
-                    
+                    <input type="text" class="form-control" name="" id="status" th:field="*{initialStatus}" readonly>
+
+
                 </div>
             </div>
             <div class="row mb-3">
@@ -83,7 +112,8 @@
                 </div>
                 <div class="col-md-9">
                     <!-- <input class="form-control" type="text" name="" id="comments" placeholder="Comments"> -->
-                    <textarea class="form-control" name="" id="comments" th:field="*{initialComments}"  placeholder="Comments"></textarea>
+                    <textarea class="form-control" name="" id="comments" th:field="*{initialComments}"
+                        placeholder="Comments"></textarea>
                 </div>
             </div>
             <div class="row text-center mb-3">
@@ -98,8 +128,8 @@
         <div id="warning-msg"></div>
         <div class="text-center text-danger" th:text="${message}"></div>
     </div>
-        <script type="text/javascript" th:inline="javascript" th:src="@{/js/request.js}" ></script>
-    
+    <script type="text/javascript" th:inline="javascript" th:src="@{/js/request.js}"></script>
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"

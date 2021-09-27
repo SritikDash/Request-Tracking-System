@@ -1,20 +1,17 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Home</title>
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
-	rel="stylesheet"
-	integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
-	crossorigin="anonymous">
-<link rel="stylesheet" href="" th:href="@{/css/Request.css}" />
-<script src="https://kit.fontawesome.com/4ed2628243.js"
-	crossorigin="anonymous"></script>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Home</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+	<link rel="stylesheet" href="" th:href="@{/css/Request.css}" />
+	<script src="https://kit.fontawesome.com/4ed2628243.js" crossorigin="anonymous"></script>
+
+	
 </head>
 
 <body>
@@ -39,13 +36,14 @@
 				<a class="btn btn-primary btn-sm" th:href="@{/Homepage}">View All
 					Requests</a>
 			</div>
-			
+
 			<div class="col-md-3">
-				
+
 			</div>
 			<div class="col-md-3">
-				<input type="search" class="form-control" name="" id="search"
-					placeholder="Search..">
+				<form th:action="@{/search}" action="" method="get">
+					<input type="search" class="form-control" name="search" id="search" placeholder="Search..">
+				</form>
 			</div>
 		</div>
 
@@ -56,24 +54,27 @@
 					<th scope="col">Request Title</th>
 					<th scope="col">Status</th>
 					<th scope="col">Assigned_to</th>
+					<th scope="col">Severity</th>
+					<th scope="col">Priority</th>
 					<th scope="col">Last_Updated_Date</th>
 					<th scope="col">Request Age</th>
-					
+
 
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="req, iStat : ${reqPage.content}">
 					<!-- <td th:text="${req.requestNumber}" /> -->
-					<td><a th:text="${req.requestNumber}"
-						th:href="@{'/EditRequest/' + ${req.requestId}}"></a></td>
+					<td><a th:text="${req.requestNumber}" th:href="@{'/EditRequest/' + ${req.requestId}}"></a></td>
 					<!-- <td><a th:text="${req.requestNumber}"></a></td> -->
-					<td th:text="${req.requestTitle}" />
-					<td th:text="${req.initialStatus}">
+					<td th:text="${req.requestTitle}"></td>
+					<td th:text="${req.initialStatus}"></td>
 					<td th:text="${req.assignedTo.firstName}">Mark</td>
+					<td th:text="${req.requestSeverity}"></td>
+					<td th:text="${req.requestPriority}"></td>
 					<td th:text="${req.assignedDate}"></td>
 					<td th:text="${req.requestAge}"></td>
-					
+
 				</tr>
 			</tbody>
 		</table>
@@ -88,18 +89,16 @@
 
 		<nav aria-label="...">
 			<ul class="pagination pagination-sm">
-				<li class="page-item" th:if="${reqPage.totalPages > 0}"
-					th:each="pageNumber : ${pageNumbers}"><a
-					th:href="@{'/'+${Page}(size=${reqPage.size}, page=${pageNumber})}"
-					
-					th:text=${pageNumber} class="page-link"></a></li>
+				<li class="page-item" th:if="${reqPage.totalPages > 0}" th:each="pageNumber : ${pageNumbers}"><a
+						th:href="@{'/'+${Page}(size=${reqPage.size}, page=${pageNumber})}" th:text=${pageNumber}
+						class="page-link"></a></li>
 			</ul>
 		</nav>
 		<div class="d-flex flex-row-reverse">
 			<a class="btn btn-danger btn-sm" th:href="@{/dashboard}">Back</a>
 		</div>
 
-	<!-- <h1 th:text="${Page}"></h1> -->
+		<!-- <h1 th:text="${Page}"></h1> -->
 	</div>
 </body>
 

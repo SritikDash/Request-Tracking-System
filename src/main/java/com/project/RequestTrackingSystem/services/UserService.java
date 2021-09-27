@@ -27,4 +27,6 @@ public interface UserService {
 	public User getById(int id);
 	
 	public String edit(User user);
+	
+	public Page<User> searchByUserField(Pageable pageable, String searchPattern);
 }

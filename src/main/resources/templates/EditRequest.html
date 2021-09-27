@@ -74,6 +74,32 @@
 
 					<div class="row mb-3">
 						<div class="col-md-3">
+							<label for="severity">Severity<span class="text-danger">*</span></label>
+						</div>
+						<div class="col-md-4">
+							<select name="" class="form-select" id="severity" th:field="*{requestSeverity}">
+								<option value="0" selected disabled>-Select-</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+							</select>
+						</div>
+		
+						<div class="col-md-2 text-center">
+							<label for="priority">Priority<span class="text-danger">*</span></label>
+						</div>
+						<div class="col-md-3">
+							<select name="" class="form-select" id="priority" th:field="*{requestPriority}">
+								<option value="0" selected disabled>-Select-</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row mb-3">
+						<div class="col-md-3">
 							<label for="rqstNum">Request Number</label>
 						</div>
 						<div class="col-md-4">

@@ -208,7 +208,7 @@ public class MainController {
 		dept.setUserId((int) session.getAttribute("userId"));
 
 //		Get All Dept Codes to display in parent deptCode
-		TreeMap<Integer, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
+		TreeMap<String, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
 
 		model.addAttribute("deptIds", deptIdsAndCodes);
 		model.addAttribute("dept", dept);
@@ -222,7 +222,7 @@ public class MainController {
 
 		ModelAndView mav = new ModelAndView("EditDepartment");
 //		Product product = service.get(id);
-		TreeMap<Integer, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
+		TreeMap<String, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
 
 		Department dept = this.deptSvc.getByDeptId(id);
 		dept.setUserId((int) session.getAttribute("userId"));
@@ -244,7 +244,7 @@ public class MainController {
 		
 		System.out.println(msg);
 
-		TreeMap<Integer, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
+		TreeMap<String, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
 
 		model.addAttribute("deptIds", deptIdsAndCodes);
 		model.addAttribute("dept", dept);
@@ -258,7 +258,7 @@ public class MainController {
 		String msg = deptSvc.save(dept);
 		System.out.println(msg);
 
-		TreeMap<Integer, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
+		TreeMap<String, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
 
 		model.addAttribute("deptIds", deptIdsAndCodes);
 		model.addAttribute("dept", dept);
@@ -770,6 +770,95 @@ public class MainController {
 		System.out.println("Data Saved");
 		return "redirect:/ViewUsers";
 	}
+	
+	
+	
+	// SEARCHING Request
+	@GetMapping("/search")
+	public String searchByRequestNumber(Model model, @RequestParam("search") String searchValue, @RequestParam("page") Optional<Integer> page,
+			@RequestParam("size") Optional<Integer> size ) {
+		
+		int currentPage = page.orElse(1);
+		int pageSize = size.orElse(8);
+
+		
+		
+//		Page<Requests> reqPage = this.reqSvc.findPaginatedByUserId(PageRequest.of(currentPage - 1, pageSize), userId, 1);
+		Page<Requests> reqPage = this.reqSvc.searchByRequestNumberOrTitle(PageRequest.of(currentPage - 1, pageSize), searchValue);
+		
+		
+		model.addAttribute("reqPage", reqPage);
+
+		int totalPages = reqPage.getTotalPages();
+		if (totalPages > 0) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+
+		
+		
+//		List<Requests> reqPage = this.reqSvc.findPaginatedByUserId(userId);
+		
+		model.addAttribute("Page", "search");
+		
+		
+		
+		
+		return "Homepage";
+		
+		
+	}
+	
+	
+	// SEARCHING User
+		@GetMapping("/searchUser")
+		public String searchByUserName(Model model, @RequestParam("search") String searchValue, @RequestParam("page") Optional<Integer> page,
+				@RequestParam("size") Optional<Integer> size ) {
+			
+			int currentPage = page.orElse(1);
+			int pageSize = size.orElse(8);
+
+			Page<User> userPage = this.userSvc.searchByUserField(PageRequest.of(currentPage - 1, pageSize), searchValue);
+
+			model.addAttribute("userPage", userPage);
+
+			int totalPages = userPage.getTotalPages();
+			if (totalPages > 0) {
+				List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+				model.addAttribute("pageNumbers", pageNumbers);
+			}
+
+			return "ViewUsers";
+			
+			
+		}
+		
+	// SEARCHING Department
+	@GetMapping("/searchDept")
+	public String searchDepartment(Model model, @RequestParam("search") String searchValue, @RequestParam("page") Optional<Integer> page,
+			@RequestParam("size") Optional<Integer> size) {
+		
+		int currentPage = page.orElse(1);
+		int pageSize = size.orElse(8);
+
+		Page<Department> deptPage = this.deptSvc.searchByDeptField(PageRequest.of(currentPage - 1, pageSize), searchValue);
+
+		model.addAttribute("deptPage", deptPage);
+
+		int totalPages = deptPage.getTotalPages();
+		if (totalPages > 0) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+
+		return "ViewDepts";
+	}
+	
+	
+	
+	
+	
+	
 }
 	
 

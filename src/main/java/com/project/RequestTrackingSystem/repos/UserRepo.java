@@ -60,7 +60,11 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 	@Query(value = "Select * from rts.user where user_email = :userEmail and user_id != :userId", nativeQuery = true)
 	public User checkDuplicateUserEmail(String userEmail, int userId);
 	
-	
+	@Query(value = "SELECT * FROM rts.user\n"
+			+ "WHERE username LIKE %:searchPattern%\n"
+			+ "OR user_first_name LIKE %:searchPattern%\n"
+			+ "OR user_last_name LIKE %:searchPattern%", nativeQuery = true)
+	public List<User> searchUser(@Param("searchPattern") String searchPattern);
 	
 	
 }

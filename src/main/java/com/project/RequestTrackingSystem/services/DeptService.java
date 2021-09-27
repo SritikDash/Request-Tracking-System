@@ -13,7 +13,7 @@ import com.project.RequestTrackingSystem.models.Department;
 public interface DeptService {
 	public String save(Department dept);
 	public TreeMap<Integer, String> getAllDeptId();
-	public TreeMap<Integer, String> getAllParentDeptId();
+	public TreeMap<String, String> getAllParentDeptId();
 	
 	public Department getByDeptId(int id);
 
@@ -21,5 +21,8 @@ public interface DeptService {
 	public List<Department> getAllDepts();
 	
 	public Page<Department> findPaginated(Pageable pageable);
+	
+	
+	public Page<Department> searchByDeptField(Pageable pageable, String searchPattern);
 
 }

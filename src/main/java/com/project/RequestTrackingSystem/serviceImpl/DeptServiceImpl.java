@@ -85,16 +85,16 @@ public class DeptServiceImpl implements DeptService {
 		return msg;
 	}
 
-	public TreeMap<Integer, String> getAllParentDeptId() {
+	public TreeMap<String, String> getAllParentDeptId() {
 
 		List<Department> getAllDept = deptRepo.findAllParentDept();
 
 //		To store Departments in sorted order according to DeptID
-		TreeMap<Integer, String> treeMapDeptCodes = new TreeMap<Integer, String>();
+		TreeMap<String, String> treeMapDeptCodes = new TreeMap<String, String>();
 
 		for (Department codes : getAllDept) {
 
-			treeMapDeptCodes.put(codes.getDeptId(), codes.getDeptCode());
+			treeMapDeptCodes.put(codes.getDeptCode(), codes.getDepartmentName());
 		}
 
 		System.out.println(treeMapDeptCodes);
@@ -110,7 +110,7 @@ public class DeptServiceImpl implements DeptService {
 
 		for (Department codes : getAllDept) {
 
-			treeMapDeptCodes.put(codes.getDeptId(), codes.getDeptCode());
+			treeMapDeptCodes.put(codes.getDeptId(), codes.getDepartmentName());
 		}
 
 		System.out.println(treeMapDeptCodes);
@@ -172,6 +172,33 @@ public class DeptServiceImpl implements DeptService {
 
         return deptPage;
     }
+	
+	
+	
+	
+	public Page<Department> searchByDeptField(Pageable pageable, String searchPattern) {
+		List<Department> dept = this.deptRepo.searchByDepartment(searchPattern);
+    	
+    	
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        
+        
+        int startItem = currentPage * pageSize;
+        List<Department> list;
+
+        if (dept.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, dept.size());
+            list = dept.subList(startItem, toIndex);
+        }
+
+        Page<Department> deptPage
+          = new PageImpl<Department>(list, PageRequest.of(currentPage, pageSize), dept.size());
+
+        return deptPage;
+	}
 	
 	
 	
