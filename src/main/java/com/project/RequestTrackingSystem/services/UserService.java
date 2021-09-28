@@ -31,5 +31,5 @@ public interface UserService {
 	
 	public Page<User> searchByUserField(Pageable pageable, String searchPattern);
 	
-	public String bcryptEncoding() throws NoSuchAlgorithmException;
+//	public String bcryptEncoding() throws NoSuchAlgorithmException;
 }

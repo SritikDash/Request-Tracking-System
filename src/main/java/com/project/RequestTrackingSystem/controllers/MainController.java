@@ -64,12 +64,12 @@ public class MainController {
 		User user = new User();
 		model.addAttribute("user", user);
 		
-		try {
-			this.userSvc.bcryptEncoding();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			this.userSvc.bcryptEncoding();
+//		} catch (NoSuchAlgorithmException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 		return "index";
 	}
