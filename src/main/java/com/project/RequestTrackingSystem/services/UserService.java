@@ -1,5 +1,6 @@
 package com.project.RequestTrackingSystem.services;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -29,4 +30,6 @@ public interface UserService {
 	public String edit(User user);
 	
 	public Page<User> searchByUserField(Pageable pageable, String searchPattern);
+	
+	public String bcryptEncoding() throws NoSuchAlgorithmException;
 }

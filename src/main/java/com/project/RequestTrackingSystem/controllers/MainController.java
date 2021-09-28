@@ -1,5 +1,6 @@
 package com.project.RequestTrackingSystem.controllers;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,6 +63,13 @@ public class MainController {
 	public String serveLogin(Model model, HttpServletRequest request) {
 		User user = new User();
 		model.addAttribute("user", user);
+		
+		try {
+			this.userSvc.bcryptEncoding();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return "index";
 	}

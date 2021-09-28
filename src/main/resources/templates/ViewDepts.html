@@ -74,7 +74,7 @@
 				<li class="page-item" th:if="${deptPage.totalPages > 0}"
 					th:each="pageNumber : ${pageNumbers}"><a
 					th:href="@{/ViewDepts(size=${deptPage.size}, page=${pageNumber})}"
-					th:text=${pageNumber} class="page-link"></a></li>
+					th:text=${pageNumber} class="page-link" th:style="${pageNumber==deptPage.number + 1} ? 'background-color:#CAEAF0'"></a></li>
 			</ul>
 		</nav>
 		<div class="d-flex flex-row-reverse">

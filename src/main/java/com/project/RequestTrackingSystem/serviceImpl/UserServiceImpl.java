@@ -2,6 +2,7 @@ package com.project.RequestTrackingSystem.serviceImpl;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -46,6 +48,22 @@ public class UserServiceImpl implements UserService{
 	        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 	        return matcher.find();
 	}
+	
+	
+//	BcryptPasswordHashing
+	public String bcryptEncoding() throws NoSuchAlgorithmException {
+		
+		String  originalPassword = "password";
+		System.out.println(BCrypt.gensalt(12));
+        String generatedSecuredPasswordHash = BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));
+        System.out.println(generatedSecuredPasswordHash);
+         
+        boolean matched = BCrypt.checkpw(originalPassword, generatedSecuredPasswordHash);
+        System.out.println(matched);
+		return "";
+	}
+	
+	
 	
 	
 //	XOR Cipher Encryption
