@@ -146,27 +146,26 @@ public class MainController {
 	}
 
 	@GetMapping("/ChangePassword")
-	public ModelAndView changePassword(Model model, HttpServletRequest request) {
-		ModelAndView mav = new ModelAndView("change_password");
+	public String changePassword(Model model, HttpServletRequest request) {
+//		ModelAndView mav = new ModelAndView("change_password");
 
 		HttpSession session = request.getSession(false);
 		
-		
+		if (session == null) {
+			return "redirect:/";
+		}
 		System.out.println("In Change Password: " + session.getAttribute("userId"));
 
-		if(session.getAttribute("userId") == null) {
-			ModelAndView login = new ModelAndView("index");
-			User user = new User();
-			mav.addObject("user", user);
-			return login;
-		}
+//		if(session.getAttribute("userId") == null) {
+//			System.out.println("Session Failed");
+//		}
 
 		ChangePassword password = new ChangePassword();
 		password.setUserId((int) session.getAttribute("userId"));
 
-		mav.addObject("password", password);
+		model.addAttribute("password", password);
 
-		return mav;
+		return "change_password";
 
 	}
 	

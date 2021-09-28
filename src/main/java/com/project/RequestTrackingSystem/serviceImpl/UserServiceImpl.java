@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService{
 	
 	//BcryptEncoding
 	public String bcryptEncoding(String  originalPassword) {
-		System.out.println(BCrypt.gensalt(12));
+//		System.out.println(BCrypt.gensalt(12));
         String generatedSecuredPasswordHash = BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));
         System.out.println(generatedSecuredPasswordHash);
          
@@ -158,7 +158,15 @@ public class UserServiceImpl implements UserService{
 	
 	
 	public boolean isUserAdmin(int userId) {
-		return this.userRepo.getAdmin(userId);
+		List<Boolean> adminFieldList =  this.userRepo.getAdmin(userId);
+		boolean isAdmin = false;
+		for(boolean iteratorOverAdminFieldList : adminFieldList) {
+			if(iteratorOverAdminFieldList == true) {
+				isAdmin = true;
+				break;
+			}
+		}
+		return isAdmin;
 	}
 	
 	

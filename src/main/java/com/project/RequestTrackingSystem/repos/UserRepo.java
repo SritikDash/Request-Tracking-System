@@ -23,7 +23,7 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 			+ "Inner join rts.dept d ON uda.deptid = d.dept_id where u.user_id = :id", nativeQuery = true)
 	public User findAllDataByJoin(int id);
 	
-//	===================================================================================
+//	==================================================================================================================
 	
 	
 	@Transactional
@@ -50,7 +50,7 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 			+ "where \n"
 			+ "uda.userid = :userId\n"
 			, nativeQuery = true)
-	public boolean getAdmin(@Param("userId") int userId);
+	public List<Boolean> getAdmin(@Param("userId") int userId);
 	
 	
 	
