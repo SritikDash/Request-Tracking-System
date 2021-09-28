@@ -50,50 +50,45 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	
-//	BcryptPasswordHashing
-	public String bcryptEncoding() throws NoSuchAlgorithmException {
-		
-		String  originalPassword = "password";
+	
+	//BcryptEncoding
+	public String bcryptEncoding(String  originalPassword) {
 		System.out.println(BCrypt.gensalt(12));
         String generatedSecuredPasswordHash = BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));
         System.out.println(generatedSecuredPasswordHash);
          
-        boolean matched = BCrypt.checkpw(originalPassword, generatedSecuredPasswordHash);
-        System.out.println(matched);
-		return "";
-	}
-	
-	
-	
-	
-//	XOR Cipher Encryption
-	public String encDec(String encDecStr) {
-		byte key = 0x1A;
-		String output = "";
-		
-		for(int i = 0; i < encDecStr.length(); i++) {
-			output+=Character.toString((char)(encDecStr.charAt(i) ^ key));
-		}
 
-		return output;
+		return generatedSecuredPasswordHash;
 	}
+	
+	//BcryptDecoding
+	public boolean bcryptDecoding(String originalPassword, String hashedPassword) {
+		boolean matched = BCrypt.checkpw(originalPassword, hashedPassword);
+		return matched;
+	}
+	
+	
 	
 	public User validate(User user) {
 		User argUser;	
 		String msg;
 		boolean isEmail = validateEmail(user.getUserEmail());
 		
+		
+		
 		if(isEmail) {
 			argUser = userRepo.findByUserEmail(user.getUserEmail());
 			System.out.println(argUser);
 			System.out.println(userRepo.findByUserEmail(user.getUserEmail()));
 			
+			
 			if(argUser == null) {
 				msg = "Email doesn't Exist";
-			} else if(user.getUserPassword().compareTo(argUser.getUserPassword()) != 0) {
-				msg = "Invalid Email or Password";
-			} else {
+			} else if(this.bcryptDecoding(user.getUserPassword(), argUser.getUserPassword())) {
+				System.out.println(this.bcryptDecoding(user.getUserPassword(), argUser.getUserPassword()));
 				msg = "Login Successful";
+			} else {
+				msg = "Invalid Email or Password";
 			}
 			
 		}
@@ -107,12 +102,12 @@ public class UserServiceImpl implements UserService{
 			System.out.println(userRepo.findByUserName(user.getUserName()));
 			if(argUser == null) {
 				msg = "UserName doesn't Exist";
-			} else if(user.getUserPassword().compareTo(argUser.getUserPassword()) != 0) {
-				msg = "Invalid UserName or Password";
-			} else {
+			} else if(this.bcryptDecoding(user.getUserPassword(), argUser.getUserPassword())) {
 				msg = "Login Successful";
+			} else {
+				msg = "Invalid Email or Password";
 				User dummyUser = this.userRepo.findAllDataByJoin(argUser.getUserId());
-				System.out.println(dummyUser.getDeptAccess().get(0).getDepartmentName());
+				System.out.println("DEPTNAME: " + dummyUser.getDeptAccess().get(0).getDepartmentName());
 			}
 		}
 		if(argUser == null) {
@@ -216,11 +211,12 @@ public class UserServiceImpl implements UserService{
 		String msg;
 		argPass.setUserId(pass.getUserId());
 		User user = userRepo.findById(pass.getUserId()).get();
-		if(user.getUserPassword().compareTo(pass.getOldPassword()) == 0) {
+		
+		if(this.bcryptDecoding(pass.getOldPassword(), user.getUserPassword())) {
 			if(pass.getNewPassword().compareTo(pass.getConfirmPassword()) == 0) {
 				if(pass.getNewPassword().compareTo(pass.getOldPassword()) != 0) {
 					if(this.passwordValidator(pass.getNewPassword())) {
-						user.setUserPassword(pass.getNewPassword());
+						user.setUserPassword(this.bcryptEncoding(pass.getNewPassword()));
 						this.userRepo.save(user);
 						msg = "Password Changed";
 					} else {
@@ -254,10 +250,10 @@ public class UserServiceImpl implements UserService{
 		
 		if(user != null) {
 			if(pass.getNewPassword().compareTo(pass.getConfirmPassword()) == 0) {
-				if(pass.getNewPassword().compareTo(user.getUserPassword()) != 0) {
+				if(!this.bcryptDecoding(pass.getNewPassword(), user.getUserPassword())) {
 					String passwordMsg = this.isPasswordValid(pass.getNewPassword());
 					if(passwordMsg.compareTo("Strong") == 0) {
-						user.setUserPassword(pass.getNewPassword());
+						user.setUserPassword(this.bcryptEncoding(pass.getNewPassword()));
 						userRepo.save(user);
 						msg = "Password Changed Successfully";
 					} else {
@@ -385,7 +381,7 @@ public class UserServiceImpl implements UserService{
 			String password = argUser.getFirstName() + getAlphaNumericString();
 			System.out.println(password);
 			//this.userRepo.updatePassword(argUser.getUserEmail(), password);
-			int stat = this.userRepo.updatePassword(argUser.getUserEmail(), password);
+			int stat = this.userRepo.updatePassword(argUser.getUserEmail(), this.bcryptEncoding(password));
 			System.out.println(stat);
 			try {
 
@@ -446,21 +442,17 @@ public class UserServiceImpl implements UserService{
 
 			Template t = config.getTemplate("reset-template.ftl");
 			String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model);
-			// System.out.println("inside mail");
-//			helper.setTo("sritik.dash51@gmail.com");
+			
 			helper.setTo(user.getUserEmail());
-			// System.out.println(user.getUserEmail());
+			
 			helper.setText(html, true);
 			helper.setSubject("Reset Password");
-			// helper.setFrom("sritik.dash51@gmail.com");
 
 			sender.send(message);
 
-//			response.setMessage("mail send to : " + "Sritik");
 			response.setMessage("mail send to : " + user.getFirstName());
 			response.setStatus(Boolean.TRUE);
 
-			// System.out.println(response.getMessage());
 
 		} catch (MessagingException | IOException | TemplateException e) {
 			response.setMessage("Mail Sending failure : " + e.getMessage());
@@ -475,15 +467,7 @@ public class UserServiceImpl implements UserService{
 	
 	public List<UserDept> getAllUsersByDept(int deptId) {
 		List<User> argUser = this.userRepo.getAllUsersByDeptId(deptId);
-//		TreeMap<Integer, String> userAndIds = new TreeMap<Integer, String>();
-		/*
-		 * TreeMap<Integer, String> treeMapDeptCodes = new TreeMap<Integer, String>();
 
-		for (Department codes : getAllDept) {
-
-			treeMapDeptCodes.put(codes.getDeptId(), codes.getDeptCode());
-		}
- */
 		List<UserDept> ud = new ArrayList<UserDept>();
 		for(User userRow : argUser) {
 			ud.add(new UserDept(userRow.getUserId(), userRow.getFirstName()));
@@ -530,7 +514,7 @@ public class UserServiceImpl implements UserService{
 			if(argUser == null) {
 				String passwordStrength = this.isPasswordValid(user.getUserPassword());
 				if(passwordStrength.compareTo("Strong") == 0) {
-					user.setUserPassword(this.encDec(user.getUserPassword()));
+					user.setUserPassword(this.bcryptEncoding(user.getUserPassword()));
 					userRepo.save(user);
 					msg = "Saved";
 				} else {
