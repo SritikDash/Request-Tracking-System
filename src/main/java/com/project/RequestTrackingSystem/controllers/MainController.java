@@ -40,7 +40,9 @@ import com.project.RequestTrackingSystem.services.DeptService;
 import com.project.RequestTrackingSystem.services.RequestService;
 import com.project.RequestTrackingSystem.services.UserService;
 import com.project.RequestTrackingSystem.services.userDeptAccessService;
+import com.project.RequestTrackingSystem.utils.DeptPDFExporter;
 import com.project.RequestTrackingSystem.utils.RequestPDFExporter;
+import com.project.RequestTrackingSystem.utils.UserPDFExporter;
 
 import dto.APIResponse;
 
@@ -827,8 +829,8 @@ public class MainController {
 		return "error";
 	}
 
-	@GetMapping("/exportPdf")
-	public void exportToPDF(HttpServletResponse response) throws DocumentException, IOException {
+	@GetMapping("/requestExportPdf")
+	public void requestExportToPDF(HttpServletResponse response) throws DocumentException, IOException {
 		response.setContentType("application/pdf");
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 		String currentDateTime = dateFormatter.format(new Date());
@@ -841,9 +843,43 @@ public class MainController {
 
 		RequestPDFExporter exporter = new RequestPDFExporter(listRequests);
 		exporter.export(response);
-		
-
 
 	}
+	
+	@GetMapping("/userExportPdf")
+	public void userExportToPDF(HttpServletResponse response) throws DocumentException, IOException {
+		response.setContentType("application/pdf");
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
 
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=users_" + currentDateTime + ".pdf";
+		response.setHeader(headerKey, headerValue);
+
+		List<User> listUsers = userSvc.getUsers();
+
+		UserPDFExporter exporter = new UserPDFExporter(listUsers);
+		exporter.export(response);
+		
+	}
+
+	
+	@GetMapping("/deptExportPdf")
+	public void deptExportToPDF(HttpServletResponse response) throws DocumentException, IOException {
+		response.setContentType("application/pdf");
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
+
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=dept_" + currentDateTime + ".pdf";
+		response.setHeader(headerKey, headerValue);
+
+		List<Department> listDept = deptSvc.getDept();
+
+		DeptPDFExporter exporter = new DeptPDFExporter(listDept);
+		exporter.export(response);
+		
+	}
+	
+	
 }

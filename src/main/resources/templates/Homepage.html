@@ -96,7 +96,8 @@
 		</nav>
 		<div class="d-flex flex-row-reverse btn-toolbar">
 			<a class="btn btn-danger btn-sm m-2" th:href="@{/dashboard}">Back</a>
-			<a th:if="${Page} == 'Homepage'" class="btn btn-info btn-sm m-2" th:href="@{/exportPdf}">Generate PDF</a>
+			<a th:if="${Page} == 'Homepage'" class="btn btn-info btn-sm m-2" th:href="@{/requestExportPdf}">Generate PDF</a>
+			
 		</div>
 
 		<!-- <h1 th:text="${Page}"></h1> -->

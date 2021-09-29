@@ -219,5 +219,12 @@ public class DeptServiceImpl implements DeptService {
 	
 	
 	
+	public List<Department> getDept() {
+		List<Department> deptList =  this.deptRepo.findAll();
+		
+		return deptList;
+	}
+	
+	
 	
 }

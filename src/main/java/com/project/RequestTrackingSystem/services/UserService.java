@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.project.RequestTrackingSystem.models.ChangePassword;
+import com.project.RequestTrackingSystem.models.Requests;
 import com.project.RequestTrackingSystem.models.User;
 import com.project.RequestTrackingSystem.models.UserDept;
 
@@ -26,6 +27,7 @@ public interface UserService {
 	public boolean isUserAdmin(int userId);
 	
 	public User getById(int id);
+	public List<User> getUsers();
 	
 	public String edit(User user);
 	

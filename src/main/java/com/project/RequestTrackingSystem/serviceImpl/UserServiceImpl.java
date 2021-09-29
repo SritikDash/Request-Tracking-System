@@ -27,6 +27,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import com.project.RequestTrackingSystem.models.ChangePassword;
 
 import com.project.RequestTrackingSystem.models.MailResponse;
+import com.project.RequestTrackingSystem.models.Requests;
 import com.project.RequestTrackingSystem.models.User;
 import com.project.RequestTrackingSystem.models.UserDept;
 import com.project.RequestTrackingSystem.repos.UserRepo;
@@ -563,6 +564,13 @@ public class UserServiceImpl implements UserService{
           = new PageImpl<User>(list, PageRequest.of(currentPage, pageSize), user.size());
 
         return userPage;
+	}
+	
+	
+	public List<User> getUsers() {
+		List<User> userList =  this.userRepo.findAll();
+		
+		return userList;
 	}
 	
 }

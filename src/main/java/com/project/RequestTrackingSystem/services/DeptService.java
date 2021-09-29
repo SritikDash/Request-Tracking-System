@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.project.RequestTrackingSystem.models.Department;
+import com.project.RequestTrackingSystem.models.Requests;
 
 
 
@@ -19,6 +20,8 @@ public interface DeptService {
 
 	public String edit(Department dept);
 	public List<Department> getAllDepts();
+	
+	public List<Department> getDept();
 	
 	public Page<Department> findPaginated(Pageable pageable);
 	
