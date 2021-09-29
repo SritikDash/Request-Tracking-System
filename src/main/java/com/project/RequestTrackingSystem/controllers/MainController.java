@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -300,13 +301,21 @@ public class MainController {
 	public String saveRqst(@ModelAttribute("request") Requests request, Model model, HttpServletRequest req) {
 		System.out.println("Save Request");
 		HttpSession session = req.getSession(false);
-
+		System.out.println("Title:"+request.getRequestTitle());
 		request.setAssignedUser((int) session.getAttribute("userId"));
-
+		
+		
+		
 		int status = this.reqSvc.saveRequest(request, 0);
+		
+		System.out.println("out of request save");
+		
+		System.out.println("Going into save rqst cmnt");
 		this.reqSvc.saveRequestsComments(request, (int) session.getAttribute("userId"));
+		
+		System.out.println("out of save rqst cmnt");
 		this.reqSvc.saveStatus(request, (int) session.getAttribute("userId"));
-
+		System.out.println("out of save status");
 		if (status == 1) {
 			return "redirect:/Homepage";
 		} else {
