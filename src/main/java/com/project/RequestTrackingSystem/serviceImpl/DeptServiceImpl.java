@@ -201,7 +201,21 @@ public class DeptServiceImpl implements DeptService {
 	}
 	
 	
-	
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	public TreeMap<String, String> getAllParentDeptIdByUserId(int userId) {
+
+		List<Department> getAllDept = deptRepo.findAllParentDeptCodesByUser(userId);
+
+//		To store Departments in sorted order according to DeptID
+		TreeMap<String, String> treeMapDeptCodes = new TreeMap<String, String>();
+
+		for (Department codes : getAllDept) {
+			treeMapDeptCodes.put(codes.getDeptCode(), codes.getDepartmentName());
+		}
+
+		System.out.println(treeMapDeptCodes);
+		return treeMapDeptCodes;
+	}
 	
 	
 	

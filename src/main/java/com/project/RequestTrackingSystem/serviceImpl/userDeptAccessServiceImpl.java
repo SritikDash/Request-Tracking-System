@@ -16,6 +16,11 @@ public class userDeptAccessServiceImpl implements userDeptAccessService {
 	UserDeptAccessRepo userDeptRepo;
 
 	public void userDeptAccess(List<UserDeptAccess> ude) {
+		
+		int userId = ude.get(0).getUserId();
+		
+		this.userDeptRepo.deleteFromUserDeptAccess(userId);
+		
 		for (UserDeptAccess u1 : ude) {
 			this.userDeptRepo.save(u1);
 		}

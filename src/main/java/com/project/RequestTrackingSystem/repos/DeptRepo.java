@@ -26,4 +26,13 @@ public interface DeptRepo extends JpaRepository<Department, Integer> {
 			+ "OR department_name LIKE %:searchPattern%", nativeQuery = true)
 	public List<Department> searchByDepartment(@Param("searchPattern") String searchPattern);
 	
+	
+	
+	
+	@Query(value = "Select d.* from rts.user u\r\n"
+			+ "Inner join rts.user_dept_access uda ON u.user_id = uda.userid\r\n"
+			+ "Inner join rts.dept d ON uda.deptid = d.dept_id where u.user_id = :userId\r\n"
+			+ "and d.dept_code  = d.parent_department_code and uda.is_admin = true;", nativeQuery = true)
+	public List<Department> findAllParentDeptCodesByUser(int userId);
+	
 }

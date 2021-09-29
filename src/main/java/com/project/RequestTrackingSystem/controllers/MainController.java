@@ -1,6 +1,5 @@
 package com.project.RequestTrackingSystem.controllers;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -146,27 +145,26 @@ public class MainController {
 	}
 
 	@GetMapping("/ChangePassword")
-	public ModelAndView changePassword(Model model, HttpServletRequest request) {
-		ModelAndView mav = new ModelAndView("change_password");
+	public String changePassword(Model model, HttpServletRequest request) {
+//		ModelAndView mav = new ModelAndView("change_password");
 
 		HttpSession session = request.getSession(false);
 		
-		
+		if (session == null) {
+			return "redirect:/";
+		}
 		System.out.println("In Change Password: " + session.getAttribute("userId"));
 
-		if(session.getAttribute("userId") == null) {
-			ModelAndView login = new ModelAndView("index");
-			User user = new User();
-			mav.addObject("user", user);
-			return login;
-		}
+//		if(session.getAttribute("userId") == null) {
+//			System.out.println("Session Failed");
+//		}
 
 		ChangePassword password = new ChangePassword();
 		password.setUserId((int) session.getAttribute("userId"));
 
-		mav.addObject("password", password);
+		model.addAttribute("password", password);
 
-		return mav;
+		return "change_password";
 
 	}
 	
@@ -216,9 +214,13 @@ public class MainController {
 		dept.setUserId((int) session.getAttribute("userId"));
 
 //		Get All Dept Codes to display in parent deptCode
-		TreeMap<String, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
+//		TreeMap<String, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
+		
+		
+//		Get All Dept Codes where the user currently logged in is ADMIN
+		TreeMap<String, String> deptIdsAndCodesByUser = deptSvc.getAllParentDeptIdByUserId((int) session.getAttribute("userId"));
 
-		model.addAttribute("deptIds", deptIdsAndCodes);
+		model.addAttribute("deptIds", deptIdsAndCodesByUser);
 		model.addAttribute("dept", dept);
 		return "Department";
 	}
@@ -863,6 +865,10 @@ public class MainController {
 	}
 	
 	
+	@GetMapping("/error")
+	public String serveErrorPage() {
+		return "error";
+	}
 	
 	
 	
