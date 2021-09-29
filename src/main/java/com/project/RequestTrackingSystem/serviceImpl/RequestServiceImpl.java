@@ -190,7 +190,7 @@ public class RequestServiceImpl implements RequestService {
 	public List<Requests> getReqs() {
 		List<Requests> reqList =  this.reqRepo.findAll();
 		for(Requests argReq : reqList) {
-			System.out.println(this.reqRepo.getAge(argReq.getRequestId()));
+//			System.out.println(this.reqRepo.getAge(argReq.getRequestId()));
 			argReq.setRequestAge(this.reqRepo.getAge(argReq.getRequestId()));
 		}
 		return reqList;

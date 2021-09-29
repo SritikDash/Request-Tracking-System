@@ -1,6 +1,10 @@
 package com.project.RequestTrackingSystem.controllers;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -8,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.lowagie.text.DocumentException;
 import com.project.RequestTrackingSystem.models.AuditLog;
 import com.project.RequestTrackingSystem.models.ChangePassword;
 import com.project.RequestTrackingSystem.models.Department;
@@ -34,6 +40,7 @@ import com.project.RequestTrackingSystem.services.DeptService;
 import com.project.RequestTrackingSystem.services.RequestService;
 import com.project.RequestTrackingSystem.services.UserService;
 import com.project.RequestTrackingSystem.services.userDeptAccessService;
+import com.project.RequestTrackingSystem.utils.RequestPDFExporter;
 
 import dto.APIResponse;
 
@@ -53,7 +60,7 @@ public class MainController {
 
 	@Autowired
 	private RequestService reqSvc;
-	
+
 	@Autowired
 	private userDeptAccessService userDeptSvc;
 
@@ -62,7 +69,7 @@ public class MainController {
 	public String serveLogin(Model model, HttpServletRequest request) {
 		User user = new User();
 		model.addAttribute("user", user);
-		
+
 //		try {
 //			this.userSvc.bcryptEncoding();
 //		} catch (NoSuchAlgorithmException e) {
@@ -80,12 +87,11 @@ public class MainController {
 //		session.setAttribute("userName", null);
 		try {
 			session.invalidate();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			System.out.println(e.toString());
 			return "redirect:/";
 		}
-		
-		
+
 		System.out.println(request.getSession(false));
 		return "redirect:/";
 	}
@@ -101,13 +107,12 @@ public class MainController {
 
 			System.out.println(session.getAttribute("userId"));
 			System.out.println(request.getSession(false));
-			
+
 //			Check whether user is admin or not
-			
-			
+
 //			session.setAttribute("isAdmin", isAdmin);
-			return "redirect:/dashboard";    
-			
+			return "redirect:/dashboard";
+
 		} else {
 			argUser.setIsInvalid(true);
 			// argUser.setMsg(argUser.getMsg());
@@ -126,13 +131,13 @@ public class MainController {
 			return "redirect:/";
 		}
 		boolean isAdmin = this.userSvc.isUserAdmin((int) session.getAttribute("userId"));
-		if(isAdmin)
+		if (isAdmin)
 			return "dashboard";
 		else
 			return "redirect:/userdashboard";
 //		return "dashboard";
 	}
-	
+
 	@GetMapping("/userdashboard")
 	public String getUserDashboard(HttpServletRequest request) {
 
@@ -149,7 +154,7 @@ public class MainController {
 //		ModelAndView mav = new ModelAndView("change_password");
 
 		HttpSession session = request.getSession(false);
-		
+
 		if (session == null) {
 			return "redirect:/";
 		}
@@ -167,8 +172,6 @@ public class MainController {
 		return "change_password";
 
 	}
-	
-	
 
 	@PostMapping("/UpdatePassword")
 	public String updatePassword(@ModelAttribute("password") ChangePassword password, Model model) {
@@ -215,10 +218,10 @@ public class MainController {
 
 //		Get All Dept Codes to display in parent deptCode
 //		TreeMap<String, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
-		
-		
+
 //		Get All Dept Codes where the user currently logged in is ADMIN
-		TreeMap<String, String> deptIdsAndCodesByUser = deptSvc.getAllParentDeptIdByUserId((int) session.getAttribute("userId"));
+		TreeMap<String, String> deptIdsAndCodesByUser = deptSvc
+				.getAllParentDeptIdByUserId((int) session.getAttribute("userId"));
 
 		model.addAttribute("deptIds", deptIdsAndCodesByUser);
 		model.addAttribute("dept", dept);
@@ -245,13 +248,12 @@ public class MainController {
 	@PostMapping("/editDept")
 	public String editDept(@ModelAttribute("dept") Department dept, Model model, HttpServletRequest request) {
 		System.out.println("Edit Dept" + dept.getDeptId());
-		
+
 		HttpSession session = request.getSession(false);
 		dept.setUserId((int) session.getAttribute("userId"));
-		
-		
+
 		String msg = deptSvc.edit(dept);
-		
+
 		System.out.println(msg);
 
 		TreeMap<String, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
@@ -286,7 +288,7 @@ public class MainController {
 		}
 
 		Requests request = new Requests();
-		
+
 		TreeMap<Integer, String> deptIdsAndCodes = deptSvc.getAllDeptId();
 
 		model.addAttribute("deptIds", deptIdsAndCodes);
@@ -298,14 +300,13 @@ public class MainController {
 	public String saveRqst(@ModelAttribute("request") Requests request, Model model, HttpServletRequest req) {
 		System.out.println("Save Request");
 		HttpSession session = req.getSession(false);
-		
+
 		request.setAssignedUser((int) session.getAttribute("userId"));
-		
-		
+
 		int status = this.reqSvc.saveRequest(request, 0);
 		this.reqSvc.saveRequestsComments(request, (int) session.getAttribute("userId"));
 		this.reqSvc.saveStatus(request, (int) session.getAttribute("userId"));
-		
+
 		if (status == 1) {
 			return "redirect:/Homepage";
 		} else {
@@ -319,26 +320,25 @@ public class MainController {
 //	        model.addAttribute("message", msg);
 
 	}
-	
+
 	@PostMapping("/editRequest")
 	public String editRqst(@ModelAttribute("request") Requests request, Model model, HttpServletRequest req) {
 		System.out.println("Save Request");
 		HttpSession session = req.getSession(false);
-		
+
 //		request.setAssignedUser((int) session.getAttribute("userId"));
-		
-		
+
 		int status = this.reqSvc.saveRequest(request, 1);
 		this.reqSvc.saveRequestsComments(request, (int) session.getAttribute("userId"));
 		this.reqSvc.saveStatus(request, (int) session.getAttribute("userId"));
-		
+
 		if (status == 1) {
 			return "redirect:/Homepage";
 		} else {
 			String msg = "Some Error Occured!! Please try again";
 			model.addAttribute("message", msg);
 			model.addAttribute("request", request);
-			return "redirect:/EditRequest/"+request.getRequestId();
+			return "redirect:/EditRequest/" + request.getRequestId();
 		}
 
 //	        System.out.println(msg);
@@ -363,14 +363,12 @@ public class MainController {
 		TreeMap<Integer, String> deptIdsAndCodes = deptSvc.getAllDeptId();
 
 		Requests request = this.reqSvc.getRequestByID(id);
-		
+
 		int assignedUserId = request.getAssignedTo().getUserId();
 		String assignedUserFirstName = request.getAssignedTo().getFirstName();
-		
-		
+
 		List<AuditLog> requestHistoryLogs = this.reqSvc.requestHistory(id);
-		
-		
+
 		mav.addObject("assignedUserId", assignedUserId);
 		mav.addObject("assignedUserFirstName", assignedUserFirstName);
 		mav.addObject("deptIds", deptIdsAndCodes);
@@ -432,7 +430,7 @@ public class MainController {
 			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
 			model.addAttribute("pageNumbers", pageNumbers);
 		}
-		
+
 		String str = "Homepage";
 		model.addAttribute("Page", str);
 
@@ -465,25 +463,24 @@ public class MainController {
 
 		String msg = this.userSvc.forgotPassword(user);
 		model.addAttribute("user", user);
-		model.addAttribute("message",msg);
+		model.addAttribute("message", msg);
 		return "resetPassword";
 	}
-	
-	
+
 	@GetMapping("/ManageUser")
 	public String manageUser(Model model, HttpServletRequest request) {
-		
+
 		HttpSession session = request.getSession(false);
 
 		if (session == null) {
 			return "redirect:/";
 		}
-		
+
 		User user = new User();
 		model.addAttribute("user", user);
 		return "ManageUser";
 	}
-	
+
 //	@PostMapping("/saveUser")
 //	public String saveUser(Model model, @ModelAttribute("user") User user) {
 //		System.out.println("User Saved");
@@ -491,13 +488,12 @@ public class MainController {
 //		return "redirect:/ViewUsers";
 //	}
 //	
-	
-	
+
 	@PostMapping("/saveUser")
 	public String saveUser(Model model, @ModelAttribute("user") User user) {
 		System.out.println("User Saved");
 		String msg = this.userSvc.save(user);
-		if(msg.compareTo("Saved") == 0) {
+		if (msg.compareTo("Saved") == 0) {
 			return "redirect:/ViewUsers";
 		} else {
 			model.addAttribute("user", user);
@@ -506,34 +502,33 @@ public class MainController {
 		}
 
 	}
-	
+
 	@PostMapping("/saveEditUser")
 	public String saveEditUser(Model model, @ModelAttribute("user") User user, RedirectAttributes redirAttrs) {
 		System.out.println("User Saved");
 		String msg = this.userSvc.edit(user);
-		if(msg.compareTo("Saved") == 0) {
+		if (msg.compareTo("Saved") == 0) {
 			return "redirect:/ViewUsers";
 		} else {
 			model.addAttribute("user", user);
 			model.addAttribute("msg", msg);
 			redirAttrs.addFlashAttribute("error", msg);
-			return "redirect:/EditUser/"+user.getUserId();
+			return "redirect:/EditUser/" + user.getUserId();
 		}
 
 	}
-	
-	
+
 	@GetMapping("/EditUser/{id}")
 	public ModelAndView editUser(Model model, @PathVariable(name = "id") int id) {
 		ModelAndView mav = new ModelAndView("EditUser");
-		
+
 		User user = this.userSvc.getById(id);
 		mav.addObject("user", user);
-		
+
 		return mav;
-		
+
 	}
-	
+
 	@GetMapping("/ViewUsers")
 	public String listUsers(HttpServletRequest request, Model model, @RequestParam("page") Optional<Integer> page,
 			@RequestParam("size") Optional<Integer> size) {
@@ -559,8 +554,7 @@ public class MainController {
 
 		return "ViewUsers";
 	}
-	
-	
+
 	@GetMapping("/ViewDepts")
 	public String listDepts(HttpServletRequest request, Model model, @RequestParam("page") Optional<Integer> page,
 			@RequestParam("size") Optional<Integer> size) {
@@ -586,32 +580,29 @@ public class MainController {
 
 		return "ViewDepts";
 	}
-	
-	
-	
+
 	@GetMapping("/getAllUsersByDept")
 	public ResponseEntity<List<UserDept>> getAllUsersByDept(@RequestParam(name = "deptId") int deptId) {
-		return new ResponseEntity<List<UserDept>>(this.userSvc.getAllUsersByDept(deptId) ,HttpStatus.OK);
+		return new ResponseEntity<List<UserDept>>(this.userSvc.getAllUsersByDept(deptId), HttpStatus.OK);
 	}
-	
-	
-	
+
 	@GetMapping("/MyRequests")
 	public String getMyRequests(Model model, HttpServletRequest request, @RequestParam("page") Optional<Integer> page,
 			@RequestParam("size") Optional<Integer> size) {
-		
+
 		HttpSession session = request.getSession(false);
 
 		if (session == null) {
 			return "redirect:/";
 		}
-		
+
 		int currentPage = page.orElse(1);
 		int pageSize = size.orElse(8);
 
 		int userId = (int) session.getAttribute("userId");
-		
-		Page<Requests> reqPage = this.reqSvc.findPaginatedByUserId(PageRequest.of(currentPage - 1, pageSize), userId, 0);
+
+		Page<Requests> reqPage = this.reqSvc.findPaginatedByUserId(PageRequest.of(currentPage - 1, pageSize), userId,
+				0);
 
 		model.addAttribute("reqPage", reqPage);
 
@@ -621,35 +612,31 @@ public class MainController {
 			model.addAttribute("pageNumbers", pageNumbers);
 		}
 
-		
-		
 //		List<Requests> reqPage = this.reqSvc.findPaginatedByUserId(userId);
-		
-		
+
 		model.addAttribute("Page", "MyRequests");
-		
-		
-		
+
 		return "Homepage";
-		
+
 	}
-	
+
 	@GetMapping("/MyTasks")
 	public String getMyTasks(Model model, HttpServletRequest request, @RequestParam("page") Optional<Integer> page,
 			@RequestParam("size") Optional<Integer> size) {
-		
+
 		HttpSession session = request.getSession(false);
 
 		if (session == null) {
 			return "redirect:/";
 		}
-		
+
 		int currentPage = page.orElse(1);
 		int pageSize = size.orElse(8);
 
 		int userId = (int) session.getAttribute("userId");
-		
-		Page<Requests> reqPage = this.reqSvc.findPaginatedByUserId(PageRequest.of(currentPage - 1, pageSize), userId, 1);
+
+		Page<Requests> reqPage = this.reqSvc.findPaginatedByUserId(PageRequest.of(currentPage - 1, pageSize), userId,
+				1);
 
 		model.addAttribute("reqPage", reqPage);
 
@@ -659,85 +646,71 @@ public class MainController {
 			model.addAttribute("pageNumbers", pageNumbers);
 		}
 
-		
-		
 //		List<Requests> reqPage = this.reqSvc.findPaginatedByUserId(userId);
-		
+
 		model.addAttribute("Page", "MyTasks");
-		
-		
-		
-		
+
 		return "Homepage";
-		
+
 	}
-	
-	
-	
-	//============================================================================================
-	
-	
+
+	// ============================================================================================
+
 	@GetMapping("/requestComments/{id}")
 	public ModelAndView requestComments(@PathVariable(name = "id") int id) {
 		ModelAndView mav = new ModelAndView("requestComments");
 //		ModelAndView mavv = new ModelAndView("status");
 //		Product product = service.get(id);
-		//TreeMap<Integer, String> deptIdsAndCodes = deptSvc.getAllDeptId();
+		// TreeMap<Integer, String> deptIdsAndCodes = deptSvc.getAllDeptId();
 
 		Requests request = this.reqSvc.getRequestByID(id);
-		
-		//mav.addObject("deptIds", deptIdsAndCodes);
+
+		// mav.addObject("deptIds", deptIdsAndCodes);
 		mav.addObject("request", request);
 		mav.addObject("requestComment", new RequestsComments());
 
 		return mav;
 	}
-	
+
 	@PostMapping("/saveComments")
 	public String requestComments(@ModelAttribute("request") Requests request, Model model, HttpServletRequest req) {
 
-		
 //		model.addAttribute("requests", request);
-		//model.addAttribute("message",msg);
+		// model.addAttribute("message",msg);
 
-		
 		System.out.println("Save Comments");
 		HttpSession session = req.getSession(false);
-		
-		//request.setAssignedUser((int) session.getAttribute("userId"));
-		
+
+		// request.setAssignedUser((int) session.getAttribute("userId"));
+
 		int status = this.reqSvc.saveRequestsComments(request, (int) session.getAttribute("userId"));
 		this.reqSvc.saveStatus(request, (int) session.getAttribute("userId"));
-		
-		//int status = this.reqSvc.requestComments(request);
+
+		// int status = this.reqSvc.requestComments(request);
 		System.out.println(status);
-		
+
 		if (status == 1) {
-			return "redirect:/Homepage";                 
+			return "redirect:/Homepage";
 		} else {
 			String msg = "Some Error Occured!! Please try again";
 			model.addAttribute("message", msg);
 			model.addAttribute("request", request);
-			return "redirect:/requestComments/"+request.getRequestId();
+			return "redirect:/requestComments/" + request.getRequestId();
 		}
 	}
-	
-	
-	
-	
+
 	@GetMapping("/deptAccess/{id}")
 	public String showDeptAccessForm(Model model, @PathVariable(name = "id") int id) {
-	List<Department> listDepts = this.deptSvc.getAllDepts();
-	model.addAttribute("listDepts",listDepts);
-	model.addAttribute("id", id);
-	// model.addAttribute("userDeptAccess",new UserDeptAccess());
-	// model.addAttribute("userDeptObj", new UserDeptAccess());
-	// model.addAttribute("userDeptObj", new ArrayList<UserDeptAccess>());
+		List<Department> listDepts = this.deptSvc.getAllDepts();
+		model.addAttribute("listDepts", listDepts);
+		model.addAttribute("id", id);
+		// model.addAttribute("userDeptAccess",new UserDeptAccess());
+		// model.addAttribute("userDeptObj", new UserDeptAccess());
+		// model.addAttribute("userDeptObj", new ArrayList<UserDeptAccess>());
 
-
-	return "UserDeptAccess";
+		return "UserDeptAccess";
 	}
-	
+
 	/* ======== Save list of Department user role ======== */
 	@PostMapping("/saveuserrole")
 	public String SaveUserDeptRole(@RequestBody List<UserDeptAccess> userDeptAccess) {
@@ -745,28 +718,24 @@ public class MainController {
 		System.out.println("Inside User_dept_access");
 		System.out.println(userDeptAccess);
 
-
 		List<UserDeptAccess> listOfValidUsers = new ArrayList<UserDeptAccess>();
 
-
-
-
-		for(UserDeptAccess uda : userDeptAccess) {
+		for (UserDeptAccess uda : userDeptAccess) {
 			// System.out.println(uda.getRole());
 			// System.out.println(uda.getDeptId());
 			// System.out.println(uda.getUserId());
 
-			if(uda.getRole().compareTo("nouser") == 0) {
+			if (uda.getRole().compareTo("nouser") == 0) {
 				continue;
 			}
 
-			if(uda.getRole().compareTo("user") == 0) {
+			if (uda.getRole().compareTo("user") == 0) {
 				uda.setUser(true);
 				uda.setAdmin(false);
 				listOfValidUsers.add(uda);
 			}
 
-			if(uda.getRole().compareTo("admin") == 0) {
+			if (uda.getRole().compareTo("admin") == 0) {
 				uda.setUser(false);
 				uda.setAdmin(true);
 				listOfValidUsers.add(uda);
@@ -780,23 +749,19 @@ public class MainController {
 		System.out.println("Data Saved");
 		return "redirect:/ViewUsers";
 	}
-	
-	
-	
+
 	// SEARCHING Request
 	@GetMapping("/search")
-	public String searchByRequestNumber(Model model, @RequestParam("search") String searchValue, @RequestParam("page") Optional<Integer> page,
-			@RequestParam("size") Optional<Integer> size ) {
-		
+	public String searchByRequestNumber(Model model, @RequestParam("search") String searchValue,
+			@RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
+
 		int currentPage = page.orElse(1);
 		int pageSize = size.orElse(8);
 
-		
-		
 //		Page<Requests> reqPage = this.reqSvc.findPaginatedByUserId(PageRequest.of(currentPage - 1, pageSize), userId, 1);
-		Page<Requests> reqPage = this.reqSvc.searchByRequestNumberOrTitle(PageRequest.of(currentPage - 1, pageSize), searchValue);
-		
-		
+		Page<Requests> reqPage = this.reqSvc.searchByRequestNumberOrTitle(PageRequest.of(currentPage - 1, pageSize),
+				searchValue);
+
 		model.addAttribute("reqPage", reqPage);
 
 		int totalPages = reqPage.getTotalPages();
@@ -805,53 +770,46 @@ public class MainController {
 			model.addAttribute("pageNumbers", pageNumbers);
 		}
 
-		
-		
 //		List<Requests> reqPage = this.reqSvc.findPaginatedByUserId(userId);
-		
+
 		model.addAttribute("Page", "search");
-		
-		
-		
-		
+
 		return "Homepage";
-		
-		
+
 	}
-	
-	
+
 	// SEARCHING User
-		@GetMapping("/searchUser")
-		public String searchByUserName(Model model, @RequestParam("search") String searchValue, @RequestParam("page") Optional<Integer> page,
-				@RequestParam("size") Optional<Integer> size ) {
-			
-			int currentPage = page.orElse(1);
-			int pageSize = size.orElse(8);
+	@GetMapping("/searchUser")
+	public String searchByUserName(Model model, @RequestParam("search") String searchValue,
+			@RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
 
-			Page<User> userPage = this.userSvc.searchByUserField(PageRequest.of(currentPage - 1, pageSize), searchValue);
-
-			model.addAttribute("userPage", userPage);
-
-			int totalPages = userPage.getTotalPages();
-			if (totalPages > 0) {
-				List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
-				model.addAttribute("pageNumbers", pageNumbers);
-			}
-
-			return "ViewUsers";
-			
-			
-		}
-		
-	// SEARCHING Department
-	@GetMapping("/searchDept")
-	public String searchDepartment(Model model, @RequestParam("search") String searchValue, @RequestParam("page") Optional<Integer> page,
-			@RequestParam("size") Optional<Integer> size) {
-		
 		int currentPage = page.orElse(1);
 		int pageSize = size.orElse(8);
 
-		Page<Department> deptPage = this.deptSvc.searchByDeptField(PageRequest.of(currentPage - 1, pageSize), searchValue);
+		Page<User> userPage = this.userSvc.searchByUserField(PageRequest.of(currentPage - 1, pageSize), searchValue);
+
+		model.addAttribute("userPage", userPage);
+
+		int totalPages = userPage.getTotalPages();
+		if (totalPages > 0) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+
+		return "ViewUsers";
+
+	}
+
+	// SEARCHING Department
+	@GetMapping("/searchDept")
+	public String searchDepartment(Model model, @RequestParam("search") String searchValue,
+			@RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
+
+		int currentPage = page.orElse(1);
+		int pageSize = size.orElse(8);
+
+		Page<Department> deptPage = this.deptSvc.searchByDeptField(PageRequest.of(currentPage - 1, pageSize),
+				searchValue);
 
 		model.addAttribute("deptPage", deptPage);
 
@@ -863,16 +821,29 @@ public class MainController {
 
 		return "ViewDepts";
 	}
-	
-	
+
 	@GetMapping("/error")
 	public String serveErrorPage() {
 		return "error";
 	}
-	
-	
-	
-	
-}
-	
 
+	@GetMapping("/exportPdf")
+	public void exportToPDF(HttpServletResponse response) throws DocumentException, IOException {
+		response.setContentType("application/pdf");
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		String currentDateTime = dateFormatter.format(new Date());
+
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=requests_" + currentDateTime + ".pdf";
+		response.setHeader(headerKey, headerValue);
+
+		List<Requests> listRequests = reqSvc.getReqs();
+
+		RequestPDFExporter exporter = new RequestPDFExporter(listRequests);
+		exporter.export(response);
+		
+
+
+	}
+
+}

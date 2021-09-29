@@ -94,8 +94,9 @@
 						class="page-link" th:style="${pageNumber==reqPage.number + 1} ? 'background-color:#CAEAF0'"></a></li>
 			</ul>
 		</nav>
-		<div class="d-flex flex-row-reverse">
-			<a class="btn btn-danger btn-sm" th:href="@{/dashboard}">Back</a>
+		<div class="d-flex flex-row-reverse btn-toolbar">
+			<a class="btn btn-danger btn-sm m-2" th:href="@{/dashboard}">Back</a>
+			<a th:if="${Page} == 'Homepage'" class="btn btn-info btn-sm m-2" th:href="@{/exportPdf}">Generate PDF</a>
 		</div>
 
 		<!-- <h1 th:text="${Page}"></h1> -->
