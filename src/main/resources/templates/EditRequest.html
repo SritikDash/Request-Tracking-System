@@ -138,6 +138,8 @@
 							<a class="btn btn-danger" th:href="@{/Homepage}">Cancel</a>
 						</div>
 					</div>
+					
+					<div th:utext="${request.initialComments}">Content</div>
 				</form>
 				<div id="warning-msg"></div>
 				<div class="text-center text-danger" th:text="${message}"></div>
