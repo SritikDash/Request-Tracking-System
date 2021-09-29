@@ -24,5 +24,7 @@ public interface DeptService {
 	
 	
 	public Page<Department> searchByDeptField(Pageable pageable, String searchPattern);
+	
+	public TreeMap<String, String> getAllParentDeptIdByUserId(int userId);
 
 }

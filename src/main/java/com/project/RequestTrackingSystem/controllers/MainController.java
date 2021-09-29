@@ -1,6 +1,5 @@
 package com.project.RequestTrackingSystem.controllers;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -215,9 +214,13 @@ public class MainController {
 		dept.setUserId((int) session.getAttribute("userId"));
 
 //		Get All Dept Codes to display in parent deptCode
-		TreeMap<String, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
+//		TreeMap<String, String> deptIdsAndCodes = deptSvc.getAllParentDeptId();
+		
+		
+//		Get All Dept Codes where the user currently logged in is ADMIN
+		TreeMap<String, String> deptIdsAndCodesByUser = deptSvc.getAllParentDeptIdByUserId((int) session.getAttribute("userId"));
 
-		model.addAttribute("deptIds", deptIdsAndCodes);
+		model.addAttribute("deptIds", deptIdsAndCodesByUser);
 		model.addAttribute("dept", dept);
 		return "Department";
 	}
@@ -862,6 +865,10 @@ public class MainController {
 	}
 	
 	
+	@GetMapping("/error")
+	public String serveErrorPage() {
+		return "error";
+	}
 	
 	
 	

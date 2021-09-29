@@ -2,7 +2,6 @@ package com.project.RequestTrackingSystem.serviceImpl;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,11 +52,8 @@ public class UserServiceImpl implements UserService{
 	
 	//BcryptEncoding
 	public String bcryptEncoding(String  originalPassword) {
-//		System.out.println(BCrypt.gensalt(12));
         String generatedSecuredPasswordHash = BCrypt.hashpw(originalPassword, BCrypt.gensalt(12));
         System.out.println(generatedSecuredPasswordHash);
-         
-
 		return generatedSecuredPasswordHash;
 	}
 	
@@ -86,7 +82,10 @@ public class UserServiceImpl implements UserService{
 				msg = "Email doesn't Exist";
 			} else if(this.bcryptDecoding(user.getUserPassword(), argUser.getUserPassword())) {
 				System.out.println(this.bcryptDecoding(user.getUserPassword(), argUser.getUserPassword()));
-				msg = "Login Successful";
+				if(argUser.getUserActive())
+					msg = "Login Successful";
+				else
+					msg = "User is currently not active";
 			} else {
 				msg = "Invalid Email or Password";
 			}
@@ -103,8 +102,12 @@ public class UserServiceImpl implements UserService{
 			if(argUser == null) {
 				msg = "UserName doesn't Exist";
 			} else if(this.bcryptDecoding(user.getUserPassword(), argUser.getUserPassword())) {
-				msg = "Login Successful";
+				if(argUser.getUserActive())
+					msg = "Login Successful";
+				else
+					msg = "User is currently not active";
 			} else {
+				argUser.setUserEmail(user.getUserName());
 				msg = "Invalid Email or Password";
 				User dummyUser = this.userRepo.findAllDataByJoin(argUser.getUserId());
 				System.out.println("DEPTNAME: " + dummyUser.getDeptAccess().get(0).getDepartmentName());
@@ -440,7 +443,6 @@ public class UserServiceImpl implements UserService{
 	private Configuration config;
 
 	public MailResponse sendEmail(Map<String, Object> model, User user) {
-		// TODO Auto-generated method stub
 		MailResponse response = new MailResponse();
 		MimeMessage message = sender.createMimeMessage();
 		try {
