@@ -30,10 +30,6 @@ public class APIResponse<T> {
 
 	T response;
 	
-	public APIResponse(int recordCount, T response) {
-		super();
-		this.recordCount = recordCount;
-		this.response = response;
-	}
+	
 	
 }
