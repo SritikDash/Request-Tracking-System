@@ -44,10 +44,10 @@
                     <li class="nav-item">
                         <a class="nav-link hover-underline-animation" th:href="@{/dashboard}">Dashboard</a>
                     </li>
-                    <li class="nav-item">
+                    <li th:if="${session.role == 'admin'}" class="nav-item">
                         <a class="nav-link hover-underline-animation" th:href="@{/ViewUsers}">Users</a>
                     </li>
-                    <li class="nav-item">
+                    <li th:if="${session.role == 'admin'}" class="nav-item">
                         <a class="nav-link hover-underline-animation" th:href="@{/ViewDepts}">Departments</a>
                     </li>
                     <li class="nav-item">
@@ -120,7 +120,7 @@
 					Tasks</a>
 				<a class="btn btn-outline-primary btn-sm" th:href="@{/MyRequests}" th:class="${Page} == 'MyRequests' ? 'btn btn-secondary btn-sm' : 'btn btn-outline-primary btn-sm'">My
 					Requests</a>
-				<a class="btn btn-outline-primary btn-sm" th:href="@{/Homepage}" th:class="${Page} == 'Homepage' ? 'btn btn-secondary btn-sm' : 'btn btn-outline-primary btn-sm'">View Requests</a>
+				<a th:if="${session.role == 'admin'}" class="btn btn-outline-primary btn-sm" th:href="@{/MyDeptTasks}" th:class="${Page} == 'Homepage' ? 'btn btn-secondary btn-sm' : 'btn btn-outline-primary btn-sm'">View Requests</a>
 			</div>
 
 			<div class="col-md-3">
@@ -139,7 +139,8 @@
 					<th scope="col">Request Number</th>
 					<th scope="col">Request Title</th>
 					<th scope="col">Status</th>
-					<th scope="col">Assigned_to</th>
+					<th scope="col">Assigned to</th>
+					<th scope="col">Assigned by</th>
 					<th scope="col">Severity</th>
 					<th scope="col">Priority</th>
 					<th scope="col">Last_Updated_Date</th>
@@ -155,7 +156,8 @@
 					<!-- <td><a th:text="${req.requestNumber}"></a></td> -->
 					<td th:text="${req.requestTitle}"></td>
 					<td th:text="${req.initialStatus}"></td>
-					<td th:text="${req.assignedTo.firstName}">Mark</td>
+					<td th:text="${req.assignedTo.firstName}"></td>
+					<td th:text="${req.createdBy.firstName}"></td>
 					<td th:text="${req.requestSeverity}"></td>
 					<td th:text="${req.requestPriority}"></td>
 					<td th:text="${req.assignedDate}"></td>

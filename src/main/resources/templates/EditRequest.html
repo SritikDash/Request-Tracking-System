@@ -72,10 +72,10 @@ table {
                     <li class="nav-item">
                         <a class="nav-link hover-underline-animation" th:href="@{/dashboard}">Dashboard</a>
                     </li>
-                    <li class="nav-item">
+                    <li th:if="${session.role == 'admin'}" class="nav-item">
                         <a class="nav-link hover-underline-animation" th:href="@{/ViewUsers}">Users</a>
                     </li>
-                    <li class="nav-item">
+                    <li th:if="${session.role == 'admin'}" class="nav-item">
                         <a class="nav-link hover-underline-animation" th:href="@{/ViewDepts}">Departments</a>
                     </li>
                     <li class="nav-item">
@@ -161,7 +161,7 @@ table {
 						<div class="col-md-9">
 							<input type="text" class="form-control" name="" id="rqstDesc"
 								th:field="*{requestDescription}"
-								placeholder="Request Description">
+								placeholder="Request Description" th:readonly="${request.initialStatus == 'Completed'}">
 						</div>
 					</div>
 					<div class="row mb-3">
@@ -172,7 +172,7 @@ table {
 
 						<div class="col-md-9">
 							<select class="form-select" name="" th:field="*{requestDept}"
-								id="deptSelect">
+								id="deptSelect" th:disabled="${request.initialStatus == 'Completed'}">
 								<option value="0" selected disabled>-Select-</option>
 								<option th:each="id : ${deptIds}" th:text="${id.value}"
 									th:value="${id.key}"></option>
@@ -187,7 +187,7 @@ table {
 
 						<div class="col-md-9">
 							<select class="form-select" th:field="*{assignedTo}" name=""
-								id="userSelect">
+								id="userSelect" th:disabled="${request.initialStatus == 'Completed'}">
 								<option th:value="${assignedUserId}"
 									th:text="${assignedUserFirstName}">
 									<!-- <option th:value="${assignedTo.getUserId()}" th:text="${assignedTo.getFirstName()}"> -->
@@ -205,7 +205,7 @@ table {
 						</div>
 						<div class="col-md-4">
 							<select name="" class="form-select" id="severity"
-								th:field="*{requestSeverity}">
+								th:field="*{requestSeverity}" th:disabled="${request.initialStatus == 'Completed'}">
 								<option value="0" selected disabled>-Select-</option>
 								<option value="1">1</option>
 								<option value="2">2</option>
@@ -218,7 +218,7 @@ table {
 						</div>
 						<div class="col-md-3">
 							<select name="" class="form-select" id="priority"
-								th:field="*{requestPriority}">
+								th:field="*{requestPriority}" th:disabled="${request.initialStatus == 'Completed'}">
 								<option value="0" selected disabled>-Select-</option>
 								<option value="1">1</option>
 								<option value="2">2</option>
@@ -241,7 +241,7 @@ table {
 						<div class="col-md-3">
 
 							<select class="form-select" name="" id="status"
-								th:field="*{initialStatus}">
+								th:field="*{initialStatus}" th:disabled="${request.initialStatus == 'Completed'}">
 								<option value="none" selected disabled>-Select-</option>
 								<option value="Pending">Pending</option>
 								<option value="In Progress">In Progress</option>
@@ -261,11 +261,11 @@ table {
 					</div>
 					<div class="row text-center mb-3">
 						<div class="col-md-6">
-							<button class="btn btn-success" id="btn-submit">Save</button>
+							<button th:disabled="${request.initialStatus == 'Completed'}" class="btn btn-success" id="btn-submit">Save</button>
 						</div>
 						<div class="col-md-6">
 							<!-- <button class="btn btn-danger">Cancel</button> -->
-							<a class="btn btn-danger" th:href="@{/Homepage}">Cancel</a>
+							<a class="btn btn-danger" th:href="@{/MyTasks}">Cancel</a>
 						</div>
 					</div>
 
@@ -326,6 +326,12 @@ table {
 							[ 'insert', [ 'link', 'picture', 'video' ] ],
 							[ 'view', [ 'fullscreen', 'codeview', 'help' ] ] ]
 				});
+		console.log($('#status').val());
+		if($('#status').val() === 'Completed') {
+			$('#summernote').summernote("disable");
+		}
+		
+	
 	</script>
 
 

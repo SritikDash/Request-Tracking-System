@@ -126,10 +126,10 @@ placeholder="Search..">
 			<thead>
 				<tr class="text-uppercase table-active">
 					<!-- <th scope="col">User ID</th> -->
-					<th scope="col">User Name</th>
-					<th scope="col">User FirstName</th>
-					<th scope="col">User LastName</th>
-					<th scope="col">User Email</th>
+					<th scope="col">UserName</th>
+					<th scope="col">FirstName</th>
+					<th scope="col">LastName</th>
+					<th scope="col">Email</th>
 					<th scope="col">Created By</th>
 					<th scope="col">Created Date</th>
 					<th scope="col">Is User Active</th>
@@ -148,7 +148,8 @@ placeholder="Search..">
 					<td th:text="${req.userEmail}"></td>
 					<td th:text="${req.createdBy}" />
 					<td th:text="${req.createdDate}"></td>
-					<td th:text="${req.userActive}"></td>
+					<td th:if="${req.userActive}"><button th:text="${req.userActive}" class="btn btn-success" disabled></button></td>
+					<td th:if="${!req.userActive}"><button th:text="${req.userActive}" class="btn btn-danger" disabled></button></td>
 				</tr>
 			</tbody>
 		</table>

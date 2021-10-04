@@ -28,5 +28,10 @@ public interface RequestRepo extends JpaRepository<Requests, Integer> {
 	@Query(value="SELECT * FROM rts.requests WHERE request_number like %:searchPattern%  OR request_title like %:searchPattern% ", nativeQuery = true)
 	public List<Requests> searchByRequestNumber(@Param("searchPattern") String searchPattern);
 	
-
+	@Query(value="Select * from rts.requests\r\n"
+			+ "where request_dept IN( \r\n"
+			+ "SELECT d.dept_id from user_dept_access ud\r\n"
+			+ "inner join dept d on d.dept_id = ud.deptid\r\n"
+			+ "where ud.is_admin = true and ud.userid = :userId)", nativeQuery = true)
+	public List<Requests> getAllRequestsForDeptAdmin(int userId);
 }
