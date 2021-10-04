@@ -107,24 +107,54 @@ public class RequestServiceImpl implements RequestService {
 			
 			if(flag == 0) {
 				seqRepo.save(new SequenceCounter());
+				
+				Map<String, Object> modelAssignedTo = new HashMap<>();
+				modelAssignedTo.put("Number", req.getRequestNumber());
+				modelAssignedTo.put("Title", req.getRequestTitle());
+				modelAssignedTo.put("Description", req.getRequestDescription());
+				modelAssignedTo.put("location", "Cozentus, Bhubaneswar");
+	    		
+				this.sendEmail(modelAssignedTo, req.getAssignedTo().getUserEmail(), req.getInitialStatus());
+				
+				Map<String, Object> modelCreatedBy = new HashMap<>();
+				modelCreatedBy.put("Number", req.getRequestNumber());
+				modelCreatedBy.put("Title", req.getRequestTitle());
+				modelCreatedBy.put("Description", "Your Request Has been assigned!!");
+				modelCreatedBy.put("location", "Cozentus, Bhubaneswar");
+	    		
+	    		this.sendEmail(modelCreatedBy, req.getCreatedBy().getUserEmail(), req.getInitialStatus());
 			}
-			Map<String, Object> modelAssignedTo = new HashMap<>();
-			modelAssignedTo.put("Number", req.getRequestNumber());
-			modelAssignedTo.put("Title", req.getRequestTitle());
-			modelAssignedTo.put("Description", req.getRequestDescription());
-			modelAssignedTo.put("location", "Cozentus, Bhubaneswar");
-    		
-			this.sendEmail(modelAssignedTo, req.getAssignedTo().getUserEmail());
 			
-			Map<String, Object> modelCreatedBy = new HashMap<>();
-			modelCreatedBy.put("Number", req.getRequestNumber());
-			modelCreatedBy.put("Title", req.getRequestTitle());
-			modelCreatedBy.put("Description", "Your Request Has been assigned!!");
-			modelCreatedBy.put("location", "Cozentus, Bhubaneswar");
-    		
-    		this.sendEmail(modelCreatedBy, req.getCreatedBy().getUserEmail());
+			
+			
+			
+			if(flag == 1) {
+				
+				Map<String, Object> modelAssignedTo = new HashMap<>();
+				modelAssignedTo.put("Number", req.getRequestNumber());
+				modelAssignedTo.put("Title", req.getRequestTitle());
+				modelAssignedTo.put("Description", "The Request is "+req.getInitialStatus());
+				modelAssignedTo.put("location", "Cozentus, Bhubaneswar");
+	    		
+				this.sendEmail(modelAssignedTo, req.getAssignedTo().getUserEmail(), req.getInitialStatus());
+				
+				
+				Map<String, Object> modelCreatedBy = new HashMap<>();
+				modelCreatedBy.put("Number", req.getRequestNumber());
+				modelCreatedBy.put("Title", req.getRequestTitle());
+				
+				if(req.getInitialStatus().equals("Completed")) {
+					modelCreatedBy.put("Description", "Your Request has been Resolved Successfully!!");
+				} else {
+					modelCreatedBy.put("Description", "Your Request is "+req.getInitialStatus());
+				}
+				
+				modelCreatedBy.put("location", "Cozentus, Bhubaneswar");
+	    		
+	    		this.sendEmail(modelCreatedBy, req.getCreatedBy().getUserEmail(), req.getInitialStatus());
+			}
 
-			status = 1;
+	    	status = 1;
 		} catch (Exception e) {
 			System.out.println(e.toString());
 			status = 0;
@@ -179,6 +209,16 @@ public class RequestServiceImpl implements RequestService {
 
 	public List<Requests> getAllRequests() {
 		List<Requests> allRequests = this.reqRepo.findAllByCreatedDateDesc();
+		for(Requests argReq : allRequests) {
+//			System.out.println(this.reqRepo.getAge(argReq.getRequestId()));
+			argReq.setRequestAge(this.reqRepo.getAge(argReq.getRequestId()));
+		}
+		return allRequests;
+	}
+	
+	
+	public List<Requests> getAllRequestsForDeptAdmin(int userId) {
+		List<Requests> allRequests = this.reqRepo.getAllRequestsForDeptAdmin(userId);
 		for(Requests argReq : allRequests) {
 //			System.out.println(this.reqRepo.getAge(argReq.getRequestId()));
 			argReq.setRequestAge(this.reqRepo.getAge(argReq.getRequestId()));
@@ -243,7 +283,7 @@ public class RequestServiceImpl implements RequestService {
 
 
 	//@Override
-	public MailResponse sendEmail(Map<String, Object> model, String email) {
+	public MailResponse sendEmail(Map<String, Object> model, String email, String status) {
 		// TODO Auto-generated method stub
 		MailResponse response = new MailResponse();
 		MimeMessage message = sender.createMimeMessage();
@@ -260,7 +300,7 @@ public class RequestServiceImpl implements RequestService {
 			helper.setTo(email);
 			System.out.println(email);
 			helper.setText(html, true);
-			helper.setSubject("New Request");
+			helper.setSubject(status);
 			//helper.setFrom(request.getFrom());
 			sender.send(message);
 
@@ -320,10 +360,12 @@ public class RequestServiceImpl implements RequestService {
 	
 	
 	
+	
+	
 //	
 //	Stats = 0 ===============>>>>>>>>>>>>  GetMyRequests
-//	Stats = AnyOther ===============>>>>>>>>>>>>  GetMyTasks
-//	
+//	Stats = 1 ===============>>>>>>>>>>>>  GetMyTasks
+//	Stats = AnyOther ========>>>>>>>>>>>>  GetAllRequestsForDeptAdmin	
 	public Page<Requests> findPaginatedByUserId(Pageable pageable, int userId, int stats) {
     	
 		List<Requests> req;
@@ -331,8 +373,10 @@ public class RequestServiceImpl implements RequestService {
 		
 		if(stats == 0) {
 			req = this.getMyRequests(userId);
-		} else {
+		} else if(stats == 1) {
 			req = this.getMyTasks(userId);
+		} else {
+			req = this.getAllRequestsForDeptAdmin(userId);
 		}
 		
 		
@@ -400,16 +444,16 @@ public class RequestServiceImpl implements RequestService {
     	//argStat.setRequestCommentId(requestComment);
     	this.statRepo.save(argStat);
     	
-    	if(request.getInitialStatus().compareTo("Completed") == 0) {
-    		Map<String, Object> model = new HashMap<>();
-    		model.put("Number", request.getRequestNumber());
-    		model.put("Title", request.getRequestTitle());
-    		model.put("Description", request.getInitialStatus());
-    		model.put("location", "Cozentus, Bhubaneswar");
-    		
-//			this.sendEmail(model, this.userRepo.getById(request.getCreatedBy().getUserId()).getUserEmail());
-			this.sendEmail(model, request.getCreatedBy().getUserEmail());
-    	}
+//    	if(request.getInitialStatus().compareTo("Completed") == 0) {
+//    		Map<String, Object> model = new HashMap<>();
+//    		model.put("Number", request.getRequestNumber());
+//    		model.put("Title", request.getRequestTitle());
+//    		model.put("Description", request.getInitialStatus());
+//    		model.put("location", "Cozentus, Bhubaneswar");
+//    		
+////			this.sendEmail(model, this.userRepo.getById(request.getCreatedBy().getUserId()).getUserEmail());
+//			this.sendEmail(model, request.getCreatedBy().getUserEmail());
+//    	}
     	
     	return 1;
    

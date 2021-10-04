@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -73,13 +72,6 @@ public class MainController {
 		User user = new User();
 		model.addAttribute("user", user);
 
-//		try {
-//			this.userSvc.bcryptEncoding();
-//		} catch (NoSuchAlgorithmException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-
 		return "index";
 	}
 
@@ -111,9 +103,8 @@ public class MainController {
 			System.out.println(session.getAttribute("userId"));
 			System.out.println(request.getSession(false));
 
-//			Check whether user is admin or not
 
-//			session.setAttribute("isAdmin", isAdmin);
+
 			return "redirect:/dashboard";
 
 		} else {
@@ -133,24 +124,21 @@ public class MainController {
 		if (session == null) {
 			return "redirect:/";
 		}
+		
+		
+//		Check whether user is admin or not
 		boolean isAdmin = this.userSvc.isUserAdmin((int) session.getAttribute("userId"));
-		if (isAdmin)
+		if (isAdmin) {
+			session.setAttribute("role", "admin");
 			return "dashboard";
-		else
-			return "redirect:/userdashboard";
-//		return "dashboard";
-	}
-
-	@GetMapping("/userdashboard")
-	public String getUserDashboard(HttpServletRequest request) {
-
-		HttpSession session = request.getSession(false);
-//		System.out.println("ID" + session.getAttribute("userId"));
-		if (session == null) {
-			return "redirect:/";
 		}
-		return "user_dashboard";
+		else {
+			session.setAttribute("role", "user");
+			return "user_dashboard";
+		}
+
 	}
+
 
 	@GetMapping("/ChangePassword")
 	public String changePassword(Model model, HttpServletRequest request) {
@@ -188,7 +176,18 @@ public class MainController {
 	}
 
 	@GetMapping("/ChangeAnyPassword")
-	public String getChangeAnyPassword(Model model) {
+	public String getChangeAnyPassword(Model model, HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+
+		if (session == null) {
+			return "redirect:/";
+		}
+		
+		if(session.getAttribute("role").toString().compareTo("user") == 0) {
+			return "redirect:/dashboard";
+		}
+		
+		
 		ChangePassword password = new ChangePassword();
 		model.addAttribute("password", password);
 		return "ChangeAnyPassword";
@@ -213,6 +212,10 @@ public class MainController {
 
 		if (session == null) {
 			return "redirect:/";
+		}
+		
+		if(session.getAttribute("role").toString().compareTo("user") == 0) {
+			return "redirect:/dashboard";
 		}
 
 		System.out.println("In Dept: " + session.getAttribute("userId"));
@@ -319,7 +322,7 @@ public class MainController {
 		this.reqSvc.saveStatus(request, (int) session.getAttribute("userId"));
 		System.out.println("out of save status");
 		if (status == 1) {
-			return "redirect:/Homepage";
+			return "redirect:/MyRequests";
 		} else {
 			String msg = "Some Error Occured!! Please try again";
 			model.addAttribute("message", msg);
@@ -344,7 +347,7 @@ public class MainController {
 		this.reqSvc.saveStatus(request, (int) session.getAttribute("userId"));
 
 		if (status == 1) {
-			return "redirect:/Homepage";
+			return "redirect:/MyTasks";
 		} else {
 			String msg = "Some Error Occured!! Please try again";
 			model.addAttribute("message", msg);
@@ -352,20 +355,11 @@ public class MainController {
 			return "redirect:/EditRequest/" + request.getRequestId();
 		}
 
-//	        System.out.println(msg);
-//	        model.addAttribute("message", msg);
+
 
 	}
 
-//	@GetMapping("/Homepage")
-//	public String getHomepage(Model model) {
-//
-//		List<Requests> allRequests = reqSvc.getAllRequests();
-//		model.addAttribute("allRequests", allRequests);
-//		long totalRowCount = reqSvc.getTotalRows();
-//		model.addAttribute("totalRows", totalRowCount);
-//		return "Homepage";
-//	}
+
 
 	@GetMapping("/EditRequest/{id}")
 	public ModelAndView showEditRequestPage(@PathVariable(name = "id") int id) {
@@ -486,6 +480,11 @@ public class MainController {
 		if (session == null) {
 			return "redirect:/";
 		}
+		
+		if(session.getAttribute("role").toString().compareTo("user") == 0) {
+			return "redirect:/dashboard";
+		}
+		
 
 		User user = new User();
 		model.addAttribute("user", user);
@@ -549,7 +548,11 @@ public class MainController {
 		if (session == null) {
 			return "redirect:/";
 		}
-
+		
+		if(session.getAttribute("role").toString().compareTo("user") == 0) {
+			return "redirect:/dashboard";
+		}
+		
 		int currentPage = page.orElse(1);
 		int pageSize = size.orElse(8);
 
@@ -574,6 +577,10 @@ public class MainController {
 
 		if (session == null) {
 			return "redirect:/";
+		}
+		
+		if(session.getAttribute("role").toString().compareTo("user") == 0) {
+			return "redirect:/dashboard";
 		}
 
 		int currentPage = page.orElse(1);
@@ -660,6 +667,44 @@ public class MainController {
 //		List<Requests> reqPage = this.reqSvc.findPaginatedByUserId(userId);
 
 		model.addAttribute("Page", "MyTasks");
+
+		return "Homepage";
+
+	}
+	
+	@GetMapping("/MyDeptTasks")
+	public String getMyDeptRequests(Model model, HttpServletRequest request, @RequestParam("page") Optional<Integer> page,
+			@RequestParam("size") Optional<Integer> size) {
+
+		HttpSession session = request.getSession(false);
+
+		if (session == null) {
+			return "redirect:/";
+		}
+		
+		if(session.getAttribute("role").toString().compareTo("user") == 0) {
+			return "redirect:/dashboard";
+		}
+
+		int currentPage = page.orElse(1);
+		int pageSize = size.orElse(8);
+
+		int userId = (int) session.getAttribute("userId");
+
+		Page<Requests> reqPage = this.reqSvc.findPaginatedByUserId(PageRequest.of(currentPage - 1, pageSize), userId,
+				2);
+
+		model.addAttribute("reqPage", reqPage);
+
+		int totalPages = reqPage.getTotalPages();
+		if (totalPages > 0) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+
+//		List<Requests> reqPage = this.reqSvc.findPaginatedByUserId(userId);
+
+		model.addAttribute("Page", "MyDeptTasks");
 
 		return "Homepage";
 

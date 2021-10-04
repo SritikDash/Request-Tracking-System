@@ -55,10 +55,10 @@
                     <li class="nav-item">
                         <a class="nav-link hover-underline-animation" th:href="@{/dashboard}">Dashboard</a>
                     </li>
-                    <li class="nav-item">
+                    <li th:if="${session.role == 'admin'}" class="nav-item">
                         <a class="nav-link hover-underline-animation" th:href="@{/ViewUsers}">Users</a>
                     </li>
-                    <li class="nav-item">
+                    <li th:if="${session.role == 'admin'}" class="nav-item">
                         <a class="nav-link hover-underline-animation" th:href="@{/ViewDepts}">Departments</a>
                     </li>
                     <li class="nav-item">
@@ -223,7 +223,7 @@
 				</div>
 				<div class="col-md-9">
 					<!-- <input class="form-control" type="text" name="" id="comments" placeholder="Comments"> -->
-					<textarea class="form-control" name="comments" id="summernote"
+					<textarea class="form-control" name="comments" id="summernote" 
 						th:field="*{initialComments}" placeholder="Comments"></textarea>
 				</div>
 				
@@ -233,7 +233,7 @@
 					<button class="btn btn-success" id="btn-submit">Save</button>
 				</div>
 				<div class="col-md-6">
-					<a class="btn btn-danger" th:href="@{/Homepage}">Cancel</a>
+					<a class="btn btn-danger" th:href="@{/MyRequests}">Cancel</a>
 				</div>
 			</div>
 		</form>
