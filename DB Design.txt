@@ -9,7 +9,9 @@ CREATE TABLE `user` (
   `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `is_user_active` BOOLEAN NOT NULL,
-  PRIMARY KEY (`user_id`));
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `user_email_UNIQUE` (`user_email`),
+  UNIQUE KEY `username_UNIQUE` (`username`));
 
 
 CREATE TABLE `dept` (
@@ -20,7 +22,8 @@ CREATE TABLE `dept` (
   `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `is_dept_active` BOOLEAN NOT NULL,
-  PRIMARY KEY (`dept_id`)); 
+  PRIMARY KEY (`dept_id`),
+  UNIQUE KEY `dept_code_UNIQUE` (`dept_code`)); 
 
 
 CREATE TABLE `user_dept_access` (
@@ -46,10 +49,12 @@ CREATE TABLE `requests` (
   `request_description` varchar(255) NOT NULL,
   `assigned_to` int NOT NULL,
   `assigned_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `initial_comments` varchar(255) DEFAULT NULL,
+  `initial_comments` longblob,
   `initial_status` varchar(45) NOT NULL,
   `created_by` int NOT NULL,
   `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `request_priority` int DEFAULT NULL,
+  `request_severity` int DEFAULT NULL,
   PRIMARY KEY (`request_id`),
   FOREIGN KEY (`assigned_to`) REFERENCES `user` (`user_id`),
   FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`),
@@ -61,7 +66,7 @@ CREATE TABLE `requests_comments` (
   `request_comment_id` int NOT NULL AUTO_INCREMENT,
   `request_id` int NOT NULL,
   `request_sequence_no` int NOT NULL,
-  `request_comment` varchar(255) NOT NULL,
+  `request_comment` longblob,
   `created_by` int NOT NULL,
   `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`request_comment_id`),
@@ -77,6 +82,7 @@ CREATE TABLE `status_codes` (
   `created_by` int NOT NULL,
   `request_id` int NOT NULL,
   PRIMARY KEY (`status_id`),
+  FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`),
   FOREIGN KEY (`request_id`) REFERENCES `requests` (`request_id`));
 
 
@@ -88,8 +94,8 @@ CREATE TABLE `audit_log` (
   `audit_desc` varchar(255) NOT NULL,
   `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `created_by` int NOT NULL,
-  `comments` varchar(255) NOT NULL,
-  `status` varchar(45) NOT NULL,
+  `comments` longblob,
+  `status` varchar(255) NOT NULL,
   PRIMARY KEY (`audit_id`),
   FOREIGN KEY (`change_type_id`) REFERENCES `requests` (`request_id`),
   FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`));
